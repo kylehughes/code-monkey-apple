@@ -15,7 +15,7 @@ extension DispatchQueue {
     
     // MARK: Private Static Properties
     
-    private static let baseQueueIdentifier = Info.bundleIdentifier.adding(subdomain: "qos")
+    private static let baseQueueIdentifier = Info.bundleIdentifier.adding(subdomain: "gcd")
     
     // MARK: Public Initialization
     
