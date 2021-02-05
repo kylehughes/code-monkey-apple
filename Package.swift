@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "CodeMonkeyApple",
+    name: "code-monkey-apple",
     platforms: [
         .iOS(.v14),
         .macOS(.v10_15),
