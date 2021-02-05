@@ -8,7 +8,7 @@
 public struct Info {
     // MARK: Public Static Properties
     
-    public static let bundleIdentifier = ReverseDomainNameIdentifier.es_kylehugh_codemonkey_apple
+    public static let bundleIdentifier = ReverseDomainName.es_kylehugh_codemonkey_apple
     
     // MARK: Private Initialization
     

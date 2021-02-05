@@ -1,11 +1,11 @@
 //
-//  ReverseDomainNameIdentifier.swift
+//  ReverseDomainName.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 1/24/21.
 //
 
-public struct ReverseDomainNameIdentifier: RawRepresentable {
+public struct ReverseDomainName: RawRepresentable {
     // MARK: Public Instance Properties
     
     public let rawValue: String
@@ -18,14 +18,14 @@ public struct ReverseDomainNameIdentifier: RawRepresentable {
     
     // MARK: Public Instance Interface
     
-    public func adding(subdomain: String) -> ReverseDomainNameIdentifier {
-        ReverseDomainNameIdentifier(rawValue: rawValue + "." + subdomain)
+    public func adding(subdomain: String) -> ReverseDomainName {
+        ReverseDomainName(rawValue: rawValue + "." + subdomain)
     }
 }
 
 // MARK: - Constants
 
-extension ReverseDomainNameIdentifier {
+extension ReverseDomainName {
     public static let es = Self.init(rawValue: "es")
     public static let es_kylehugh = Self.es.adding(subdomain: "kylehugh")
     public static let es_kylehugh_codemonkey = Self.es_kylehugh.adding(subdomain: "code-monkey")
