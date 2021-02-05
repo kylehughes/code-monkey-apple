@@ -41,7 +41,7 @@ extension Publisher {
     }
     
     public func receiveForWorkForUI() -> Publishers.ReceiveOn<Self, DispatchQueue>  {
-        receive(on: DispatchQueue.uiWorker)
+        receive(on: DispatchQueue.uiWork)
     }
 }
 

@@ -106,7 +106,7 @@ extension DispatchQueue {
 extension DispatchQueue {
     public enum RootQueue {
         case ui
-        case uiWorker
+        case uiWork
         
         // MARK: Public Static Interface
         
@@ -114,8 +114,8 @@ extension DispatchQueue {
             switch self {
             case .ui:
                 return .ui
-            case .uiWorker:
-                return .uiWorker
+            case .uiWork:
+                return .uiWork
             }
         }
     }
