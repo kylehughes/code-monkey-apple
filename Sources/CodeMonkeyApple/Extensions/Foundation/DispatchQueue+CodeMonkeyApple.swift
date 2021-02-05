@@ -10,8 +10,10 @@ import Foundation
 extension DispatchQueue {
     // MARK: Root Queues
     
+    public static let diskIO = makeRootQueue(subdomain: "disk-io")
+    public static let networkIO = makeRootQueue(subdomain: "network-io")
     public static let ui = DispatchQueue.main
-    public static let uiWorker = makeRootQueue(subdomain: "ui-worker", qos: .default)
+    public static let uiWork = makeRootQueue(subdomain: "ui-work")
     
     // MARK: Private Static Properties
     
