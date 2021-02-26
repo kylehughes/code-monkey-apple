@@ -6,13 +6,15 @@ let package = Package(
     name: "code-monkey-apple",
     platforms: [
         .iOS(.v14),
-        .macOS(.v10_15),
+        .macOS(.v11),
         .watchOS(.v7)
     ],
     products: [
         .library(
             name: "CodeMonkeyApple",
-            targets: ["CodeMonkeyApple"]
+            targets: [
+                "CodeMonkeyApple"
+            ]
         ),
     ],
     dependencies: [
@@ -24,7 +26,9 @@ let package = Package(
         ),
         .testTarget(
             name: "CodeMonkeyAppleTests",
-            dependencies: ["CodeMonkeyApple"]
+            dependencies: [
+                "CodeMonkeyApple"
+            ]
         ),
     ]
 )
