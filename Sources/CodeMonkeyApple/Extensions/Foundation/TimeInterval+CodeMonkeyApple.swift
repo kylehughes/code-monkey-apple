@@ -26,6 +26,14 @@ extension TimeInterval {
         minutes(60) * hours
     }
     
+    public static func millisecond() -> TimeInterval {
+        milliseconds(1)
+    }
+    
+    public static func milliseconds(_ milliseconds: Double) -> TimeInterval {
+        milliseconds / 1000
+    }
+    
     public static func minutes() -> TimeInterval {
         minutes(1)
     }
