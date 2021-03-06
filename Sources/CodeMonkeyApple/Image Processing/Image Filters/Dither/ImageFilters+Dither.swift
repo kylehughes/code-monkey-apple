@@ -9,6 +9,12 @@ import Accelerate
 import CoreGraphics
 
 extension ImageFilters {
+    /// - SeeAlso: https://developer.apple.com/documentation/accelerate/building_a_basic_conversion_workflow
+    /// - SeeAlso: https://developer.apple.com/documentation/accelerate/conversion
+    /// - SeeAlso: https://developer.apple.com/documentation/accelerate/converting_color_images_to_grayscale
+    /// - SeeAlso: https://developer.apple.com/documentation/accelerate/real-time_video_effects_with_vimage
+    /// - SeeAlso: https://developer.apple.com/documentation/accelerate/standardizing_arbitrary_image_formats_for_processing
+    /// - SeeAlso: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vImage/OverviewofvImage/OverviewofvImage.html
     public struct Dither {
         // MARK: Public Static Interface
         
@@ -22,7 +28,7 @@ extension ImageFilters {
             to image: CGImage,
             targetWidth: CGFloat? = nil
         ) throws -> (vImage_Buffer, vImage_CGImageFormat) {
-            guard image.alphaInfo == .none else {
+            guard not(image.hasAlphaChannel) else {
                 throw Error.willNotDitherImageWithAlphaChannel
             }
             
