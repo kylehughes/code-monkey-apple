@@ -11,6 +11,6 @@ extension CGImage {
     // MARK: Public Instance Interface
     
     public var hasAlphaChannel: Bool {
-        alphaInfo == .none || alphaInfo == .noneSkipFirst || alphaInfo == .noneSkipLast
+        alphaInfo != .none && alphaInfo != .noneSkipFirst && alphaInfo != .noneSkipLast
     }
 }
