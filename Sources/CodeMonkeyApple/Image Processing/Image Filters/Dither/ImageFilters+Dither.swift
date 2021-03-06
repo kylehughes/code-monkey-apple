@@ -331,7 +331,6 @@ extension ImageFilters {
             }
         }
     }
-
 }
 
 // MARK: - ImageFilters.Dither.Error Definition
