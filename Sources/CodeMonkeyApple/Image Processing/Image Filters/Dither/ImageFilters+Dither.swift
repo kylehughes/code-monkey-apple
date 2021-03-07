@@ -15,11 +15,14 @@ extension ImageFilters {
     /// - SeeAlso: https://developer.apple.com/documentation/accelerate/real-time_video_effects_with_vimage
     /// - SeeAlso: https://developer.apple.com/documentation/accelerate/standardizing_arbitrary_image_formats_for_processing
     /// - SeeAlso: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/vImage/OverviewofvImage/OverviewofvImage.html
-    public struct Dither {
+    public enum Dither {
         // MARK: Public Static Interface
         
         public static func apply(to image: CGImage, targetWidth: CGFloat? = nil) throws -> CGImage {
             let (imageBuffer, imageFormat) = try apply(to: image, targetWidth: targetWidth)
+            defer {
+                imageBuffer.free()
+            }
             
             return try imageBuffer.createCGImage(format: imageFormat)
         }
@@ -71,9 +74,6 @@ extension ImageFilters {
             // 3. Convert processing image buffer to grayscale.
             
             var grayscaleImageBuffer = try makeGrayscaleImageBuffer(targeting: scaledImageBuffer)
-            defer {
-                grayscaleImageBuffer.free()
-            }
             
             try convertProcessingImage(from: &scaledImageBuffer, toGrayscaleImageIn: &grayscaleImageBuffer)
             
@@ -92,7 +92,7 @@ extension ImageFilters {
             
             try convert1BitDitheredImage(from: &ditheredImageBuffer, backTo8BitImageIn: &grayscaleImageBuffer)
             
-            // 5. Return processed image buffer and associated image format.
+            // 5. Return final processed image buffer and associated image format.
             
             let grayscaleImageFormat = try makeGrayscaleImageFormat()
             
