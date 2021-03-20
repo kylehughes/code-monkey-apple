@@ -37,23 +37,6 @@ public final class DispatchQueueFactory {
         )
     }
     
-    public func makeRootQueue(
-        subdomain: String,
-        qos: DispatchQoS = .unspecified,
-        attributes: DispatchQueue.Attributes = [],
-        autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency = .inherit
-    ) -> DispatchQueue {
-        let label = domain.adding(subdomain: subdomain)
-        
-        return DispatchQueue(
-            label: label,
-            qos: qos,
-            attributes: attributes,
-            autoreleaseFrequency: autoreleaseFrequency
-            target: .global()
-        )
-    }
-    
     public func makeOvercommittingRootQueue(
         subdomain: String,
         qos: DispatchQoS = .unspecified,
@@ -68,6 +51,23 @@ public final class DispatchQueueFactory {
             attributes: attributes,
             autoreleaseFrequency: autoreleaseFrequency,
             target: nil
+        )
+    }
+    
+    public func makeRootQueue(
+        subdomain: String,
+        qos: DispatchQoS = .unspecified,
+        attributes: DispatchQueue.Attributes = [],
+        autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency = .inherit
+    ) -> DispatchQueue {
+        let label = domain.adding(subdomain: subdomain)
+        
+        return DispatchQueue(
+            label: label,
+            qos: qos,
+            attributes: attributes,
+            autoreleaseFrequency: autoreleaseFrequency,
+            target: .global()
         )
     }
 }

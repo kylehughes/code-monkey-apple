@@ -45,7 +45,11 @@ extension DomainNameTests {
         // Given…
         
         let rawValue = "es.kylehugh.subdomain"
-        let tokens = ["es", "kylehugh", "subdomain"]
+        let tokens = [
+            "es",
+            "kylehugh",
+            "subdomain"
+        ]
         
         // When…
         
@@ -61,7 +65,9 @@ extension DomainNameTests {
         // Given…
         
         let rawValue = "es"
-        let tokens = [rawValue]
+        let tokens = [
+            rawValue
+        ]
         
         // When…
         
