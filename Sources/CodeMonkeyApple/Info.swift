@@ -8,5 +8,5 @@
 public enum Info {
     // MARK: Public Static Properties
     
-    public static let bundleIdentifier = ReverseDomainName.es_kylehugh_codemonkey_apple
+    public static let id = ReverseDomainName.es_kylehugh_codeMonkey_apple
 }

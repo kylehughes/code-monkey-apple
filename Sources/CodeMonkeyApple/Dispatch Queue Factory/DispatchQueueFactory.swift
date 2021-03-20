@@ -50,6 +50,24 @@ public final class DispatchQueueFactory {
             qos: qos,
             attributes: attributes,
             autoreleaseFrequency: autoreleaseFrequency
+            target: .global()
+        )
+    }
+    
+    public func makeOvercommittingRootQueue(
+        subdomain: String,
+        qos: DispatchQoS = .unspecified,
+        attributes: DispatchQueue.Attributes = [],
+        autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency = .inherit
+    ) -> DispatchQueue {
+        let label = domain.adding(subdomain: subdomain)
+        
+        return DispatchQueue(
+            label: label,
+            qos: qos,
+            attributes: attributes,
+            autoreleaseFrequency: autoreleaseFrequency,
+            target: nil
         )
     }
 }
@@ -57,5 +75,5 @@ public final class DispatchQueueFactory {
 // MARK: - Internal Singleton
 
 extension DispatchQueueFactory {
-    static let shared = DispatchQueueFactory(domain: Info.bundleIdentifier.adding(subdomain: "gcd"))
+    static let shared = DispatchQueueFactory(domain: Info.id.adding(subdomain: "gcd"))
 }
