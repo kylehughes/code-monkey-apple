@@ -11,7 +11,13 @@ import Foundation
 extension Publisher {
     // MARK: Mapping Elements
     
-    public func mapToNil<NewOutput>() -> Publishers.Map<Self, Optional<NewOutput>> {
+    public func mapToNil() -> Publishers.Map<Self, Optional<Output>> {
+        map { _ in
+            .none
+        }
+    }
+    
+    public func mapToNil<NewOutput>(as: NewOutput.Type) -> Publishers.Map<Self, Optional<NewOutput>> {
         map { _ in
             .none
         }
