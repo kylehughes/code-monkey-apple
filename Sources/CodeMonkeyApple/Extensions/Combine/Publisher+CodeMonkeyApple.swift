@@ -12,7 +12,7 @@ extension Publisher {
     // MARK: Filtering Elements
     
     public func skipNil<UnwrappedOutput>(
-    ) -> Publishers.CompactMap<Self, Output> where Output == Optional<UnwrappedOutput> {
+    ) -> Publishers.CompactMap<Self, UnwrappedOutput> where Output == Optional<UnwrappedOutput> {
         compactMap { $0 }
     }
     
