@@ -29,7 +29,8 @@ extension DomainNameTests {
         // Given…
         
         let rawValue = ""
-        let tokens: [String] = []
+        let subdomains: [Subdomain] = [
+        ]
         
         // When…
         
@@ -38,14 +39,14 @@ extension DomainNameTests {
         // Then…
         
         XCTAssertEqual(domainName.rawValue, rawValue)
-        XCTAssertEqual(domainName.tokens, tokens)
+        XCTAssertEqual(domainName.subdomains, subdomains)
     }
     
     func test_init_rawValue_multiple() {
         // Given…
         
         let rawValue = "es.kylehugh.subdomain"
-        let tokens = [
+        let subdomains: [Subdomain] = [
             "es",
             "kylehugh",
             "subdomain"
@@ -58,15 +59,15 @@ extension DomainNameTests {
         // Then…
         
         XCTAssertEqual(domainName.rawValue, rawValue)
-        XCTAssertEqual(domainName.tokens, tokens)
+        XCTAssertEqual(domainName.subdomains, subdomains)
     }
     
     func test_init_rawValue_single() {
         // Given…
         
         let rawValue = "es"
-        let tokens = [
-            rawValue
+        let subdomains: [Subdomain] = [
+            Subdomain(rawValue: rawValue)
         ]
         
         // When…
@@ -76,6 +77,6 @@ extension DomainNameTests {
         // Then…
         
         XCTAssertEqual(domainName.rawValue, rawValue)
-        XCTAssertEqual(domainName.tokens, tokens)
+        XCTAssertEqual(domainName.subdomains, subdomains)
     }
 }
