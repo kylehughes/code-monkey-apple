@@ -9,6 +9,18 @@ import Combine
 import Foundation
 
 extension Publisher {
+    // MARK: Mapping Elements
+    
+    public func mapToNil<NewOutput>() -> Publishers.Map<Self, Optional<NewOutput>> {
+        map { _ in
+            .none
+        }
+    }
+    
+    public func mapToOptional() -> Publishers.Map<Self, Optional<Output>> {
+        map(Optional.init)
+    }
+    
     // MARK: Filtering Elements
     
     public func skipNil<UnwrappedOutput>(
