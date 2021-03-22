@@ -34,6 +34,16 @@ extension Publisher {
         compactMap { $0 }
     }
     
+    // MARK: Handling Errors
+    
+    public func catchAndReplace<Replacement>(
+        with replacement: Replacement
+    ) -> Publishers.Catch<Self, Just<Replacement>> where Failure: Error {
+        `catch` { failure in
+            Just(replacement)
+        }
+    }
+    
     // MARK: Specifying Schedulers
     
     public func doWorkForUIAndReceiveForUI<WorkPublisher>(
