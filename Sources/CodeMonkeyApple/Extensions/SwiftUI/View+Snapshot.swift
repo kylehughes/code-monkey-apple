@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+
+#if canImport(UIKit)
+
 import UIKit
 
 extension View {
@@ -32,3 +35,5 @@ extension View {
         }
     }
 }
+
+#endif

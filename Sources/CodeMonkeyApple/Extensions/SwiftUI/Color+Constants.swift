@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+
+import UIKit
+
 extension Color {
     // MARK: Grays
     
@@ -18,3 +22,5 @@ extension Color {
     public static let systemGroupedBackground = Color(.systemGroupedBackground)
     public static let tertiarySystemGroupedBackground = Color(.tertiarySystemGroupedBackground)
 }
+
+#endif
