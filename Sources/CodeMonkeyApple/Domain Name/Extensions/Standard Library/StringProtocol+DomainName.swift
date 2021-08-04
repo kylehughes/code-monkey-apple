@@ -1,5 +1,5 @@
 //
-//  StringProtocol+CodeMonkeyApple.swift
+//  StringProtocol+DomainName.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 3/21/21.

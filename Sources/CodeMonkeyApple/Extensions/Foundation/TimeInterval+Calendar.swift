@@ -1,6 +1,6 @@
 //
-//  TimeInterval+CodeMonkeyApple.swift
-//  ditherpedia-bot
+//  TimeInterval+Calendar.swift
+//  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 2/26/21.
 //

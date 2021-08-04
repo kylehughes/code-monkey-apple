@@ -1,5 +1,5 @@
 //
-//  DispatchQueue+CodeMonkeyApple.swift
+//  DispatchQueue+DispatchQueueFactory.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 1/24/21.
@@ -7,14 +7,7 @@
 
 import Foundation
 
-extension DispatchQueue {
-    // MARK: Root Queues
-    
-    public static let diskIO = DispatchQueueFactory.shared.makeRootQueue(subdomain: "disk-io")
-    public static let networkIO = DispatchQueueFactory.shared.makeRootQueue(subdomain: "network-io")
-    public static let ui = DispatchQueue.main
-    public static let uiWork = DispatchQueueFactory.shared.makeRootQueue(subdomain: "ui-work")
-    
+extension DispatchQueue {    
     // MARK: Public Initialization
     
     public convenience init(
