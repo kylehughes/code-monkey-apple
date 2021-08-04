@@ -7,6 +7,7 @@
 
 #if canImport(UIKit)
 
+import Foundation
 import UIKit
 
 public final class FeedbackGenerator {
@@ -53,52 +54,54 @@ public final class FeedbackGenerator {
     
     // MARK: Public Instance Interface
     
-    public func generate(_ feedback: Feedback?) {
+    @discardableResult
+    public func generate(using receipt: Receipt) -> Receipt {
+        generate(receipt.feedbackAndPlatformGenerator).asReceipt
+    }
+    
+    @discardableResult
+    public func generate(_ feedback: Feedback?) -> Receipt? {
         guard let feedback = feedback else {
-            return
+            return nil
         }
 
-        generate(convertible: feedback)
+        return generate(feedback)
     }
     
-    public func generate(_ feedback: Feedback) {
-        generate(convertible: feedback)
+    @discardableResult
+    public func generate(_ feedback: Feedback) -> Receipt {
+        generate(.from(feedback)).asReceipt
     }
     
-    public func generate(for semanticFeedback: SemanticFeedback?) {
+    @discardableResult
+    public func generate(for semanticFeedback: SemanticFeedback?) -> Receipt? {
         guard let semanticFeedback = semanticFeedback else {
-            return
+            return nil
         }
 
-        generate(convertible: semanticFeedback)
+        return generate(semanticFeedback.base) as Receipt
     }
     
-    public func generate(for semanticFeedback: SemanticFeedback) {
-        generate(convertible: semanticFeedback)
+    @discardableResult
+    public func generate(for semanticFeedback: SemanticFeedback) -> Receipt {
+        generate(semanticFeedback.base)
     }
-    
-    public func prepare(_ feedback: Feedback?) {
-        guard let feedback = feedback else {
-            return
-        }
 
-        prepare(convertible: feedback)
+    public func prepare(_ feedback: Feedback) -> Receipt {
+        let feedbackAndPlatformGenerator = FeedbackAndPlatformGenerator.from(feedback)
+        feedbackAndPlatformGenerator.platformGenerator.prepare()
+        
+        return Receipt(feedbackAndPlatformGenerator)
     }
-    
-    public func prepare(_ feedback: Feedback) {
-        prepare(convertible: feedback)
-    }
-    
-    public func prepare(for semanticFeedback: SemanticFeedback?) {
-        guard let semanticFeedback = semanticFeedback else {
-            return
-        }
 
-        prepare(convertible: semanticFeedback)
+    public func prepare(for semanticFeedback: SemanticFeedback) -> Receipt {
+        prepare(semanticFeedback.base)
     }
     
-    public func prepare(for semanticFeedback: SemanticFeedback) {
-        prepare(convertible: semanticFeedback)
+    public func prepareAgain(_ receipt: Receipt) -> Receipt {
+        receipt.feedbackAndPlatformGenerator.platformGenerator.prepare()
+        
+        return receipt
     }
     
     public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
@@ -122,125 +125,53 @@ public final class FeedbackGenerator {
     public func setIsEnabled(basedOn isEnabledProvider: @escaping IsEnabledProvider) {
         self.isEnabledProvider = isEnabledProvider
     }
-    
-    // MARK: Private Lazy Properties
-    
-    private lazy var heavyImpactNotificationFeedbackGenerator: UIImpactFeedbackGenerator = {
-        UIImpactFeedbackGenerator(style: .heavy)
-    }()
-    
-    private lazy var lightImpactNotificationFeedbackGenerator: UIImpactFeedbackGenerator = {
-        UIImpactFeedbackGenerator(style: .light)
-    }()
-    
-    private lazy var mediumImpactNotificationFeedbackGenerator: UIImpactFeedbackGenerator = {
-        UIImpactFeedbackGenerator(style: .medium)
-    }()
-    
-    private lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator = {
-        UINotificationFeedbackGenerator()
-    }()
-    
-    private lazy var rigidImpactNotificationFeedbackGenerator: UIImpactFeedbackGenerator = {
-        UIImpactFeedbackGenerator(style: .rigid)
-    }()
-    
-    private lazy var selectionFeedbackGenerator: UISelectionFeedbackGenerator = {
-        UISelectionFeedbackGenerator()
-    }()
-    
-    private lazy var softImpactNotificationFeedbackGenerator: UIImpactFeedbackGenerator = {
-        UIImpactFeedbackGenerator(style: .soft)
-    }()
-    
+
     // MARK: Private Instance Interface
     
     private var isEnabled: Bool {
         isEnabledProvider?() ?? true
     }
-    
-    private func generate(_ feedback: Feedback.Impact) {
-        let feedbackGenerator = getFeedbackGenerator(for: feedback)
-        
+
+    private func generate(_ feedback: Feedback.Impact, using platformGenerator: UIImpactFeedbackGenerator) {
         if let intensity = feedback.intensity {
-            feedbackGenerator.impactOccurred(intensity: intensity)
+            platformGenerator.impactOccurred(intensity: intensity)
         } else {
-            feedbackGenerator.impactOccurred()
+            platformGenerator.impactOccurred()
         }
     }
     
-    private func generate(_ feedback: Feedback.Notification) {
-        notificationFeedbackGenerator.notificationOccurred(feedback.platformType)
+    private func generate(_ feedback: Feedback.Notification, using platformGenerator: UINotificationFeedbackGenerator) {
+        platformGenerator.notificationOccurred(feedback.platformType)
     }
     
-    private func generate(_ feedback: Feedback.Selection) {
+    private func generate(_ feedback: Feedback.Selection, using platformGenerator: UISelectionFeedbackGenerator) {
         switch feedback {
         case .selectionChanged:
-            selectionFeedbackGenerator.selectionChanged()
+            platformGenerator.selectionChanged()
         }
     }
     
-    private func generate(convertible: FeedbackGeneratorConvertible) {
+    private func generate(
+        _ feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator
+    ) -> FeedbackAndPlatformGenerator {
         guard isEnabled else {
-            return
+            return feedbackAndPlatformGenerator
         }
         
-        switch convertible.asFeedback {
-        case let .impact(impact):
-            generate(impact)
-        case let .notification(notification):
-            generate(notification)
-        case let .selection(selection):
-            generate(selection)
-        }
-    }
-    
-    private func getFeedbackGenerator(
-        for impact: Feedback.Impact
-    ) -> UIImpactFeedbackGenerator {
-        switch impact {
-        case .heavy:
-            return heavyImpactNotificationFeedbackGenerator
-        case .light:
-            return lightImpactNotificationFeedbackGenerator
-        case .medium:
-            return mediumImpactNotificationFeedbackGenerator
-        case .rigid:
-            return rigidImpactNotificationFeedbackGenerator
-        case .soft:
-            return softImpactNotificationFeedbackGenerator
-        }
-    }
-    
-    private func prepare(_ feedback: Feedback.Impact) {
-        getFeedbackGenerator(for: feedback).prepare()
-    }
-    
-    private func prepare(_ feedback: Feedback.Notification) {
-        notificationFeedbackGenerator.prepare()
-    }
-    
-    private func prepare(_ feedback: Feedback.Selection) {
-        selectionFeedbackGenerator.prepare()
-    }
-    
-    private func prepare(convertible: FeedbackGeneratorConvertible) {
-        guard isEnabled else {
-            return
+        switch feedbackAndPlatformGenerator {
+        case let .impact(impact, platformGenerator):
+            generate(impact, using: platformGenerator)
+        case let .notification(notification, platformGenerator):
+            generate(notification, using: platformGenerator)
+        case let .selection(selection, platformGenerator):
+            generate(selection, using: platformGenerator)
         }
         
-        switch convertible.asFeedback {
-        case let .impact(impact):
-            prepare(impact)
-        case let .notification(notification):
-            prepare(notification)
-        case let .selection(selection):
-            prepare(selection)
-        }
+        return feedbackAndPlatformGenerator
     }
 }
 
-// MARK: - FeedbackGenerator.Feeback Definition
+// MARK: - FeedbackGenerator.Feedback Definition
 
 extension FeedbackGenerator {
     public enum Feedback: SynthesizedIdentifiable {
@@ -248,21 +179,11 @@ extension FeedbackGenerator {
         case notification(Notification)
         case selection(Selection)
         
-        // MARK: Factory Functions
+        // MARK: Public Static Interface
         
         public static var selection: Feedback {
             .selection(.selectionChanged)
         }
-    }
-}
-
-// MARK: - FeedbackGeneratorConvertible Extension
-
-extension FeedbackGenerator.Feedback: FeedbackGeneratorConvertible {
-    // MARK: Public Instance Interface
-    
-    public var asFeedback: FeedbackGenerator.Feedback {
-        self
     }
 }
 
@@ -312,6 +233,21 @@ extension FeedbackGenerator.Feedback {
                 return intensity
             }
         }
+        
+        public var platformType: UIImpactFeedbackGenerator.FeedbackStyle {
+            switch self {
+            case .heavy:
+                return .heavy
+            case .light:
+                return .light
+            case .medium:
+                return .medium
+            case .rigid:
+                return .rigid
+            case .soft:
+                return .soft
+            }
+        }
     }
 }
 
@@ -346,6 +282,73 @@ extension FeedbackGenerator.Feedback {
     }
 }
 
+// MARK: - FeedbackGenerator.FeedbackAndPlatformGenerator Definition
+
+extension FeedbackGenerator {
+    internal enum FeedbackAndPlatformGenerator {
+        case impact(Feedback.Impact, UIImpactFeedbackGenerator)
+        case notification(Feedback.Notification, UINotificationFeedbackGenerator)
+        case selection(Feedback.Selection, UISelectionFeedbackGenerator)
+        
+        // MARK: Internal Static Interface
+        
+        internal static func from(_ feedback: Feedback) -> FeedbackAndPlatformGenerator {
+            switch feedback {
+            case let .impact(feedback):
+                return .impact(feedback)
+            case let .notification(feedback):
+                return .notification(feedback)
+            case let .selection(feedback):
+                return .selection(feedback)
+            }
+        }
+        
+        internal static func impact(_ feedback: Feedback.Impact) -> FeedbackAndPlatformGenerator {
+            .impact(feedback, UIImpactFeedbackGenerator(style: feedback.platformType))
+        }
+        
+        internal static func notification(_ feedback: Feedback.Notification) -> FeedbackAndPlatformGenerator {
+            .notification(feedback, UINotificationFeedbackGenerator())
+        }
+        
+        internal static func selection(_ feedback: Feedback.Selection) -> FeedbackAndPlatformGenerator {
+            .selection(feedback, UISelectionFeedbackGenerator())
+        }
+        
+        // MARK: Internal Instance Interface
+        
+        internal var asReceipt: Receipt {
+            Receipt(self)
+        }
+        
+        internal var platformGenerator: UIFeedbackGenerator {
+            switch self {
+            case let .impact(_, platformGenerator):
+                return platformGenerator
+            case let .notification(_, platformGenerator):
+                return platformGenerator
+            case let .selection(_, platformGenerator):
+                return platformGenerator
+            }
+        }
+    }
+}
+
+// MARK: - FeedbackGenerator.Receipt Definition
+
+extension FeedbackGenerator {
+    public struct Receipt {
+        internal let feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator
+        
+        // MARK: Internal Initialization
+        
+        internal init(_ feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator) {
+            self.feedbackAndPlatformGenerator = feedbackAndPlatformGenerator
+        }
+    }
+}
+
+
 // MARK: - FeedbackGenerator.SemanticFeedback Definition
 
 extension FeedbackGenerator {
@@ -358,24 +361,6 @@ extension FeedbackGenerator {
             self.base = base
         }
     }
-}
-
-// MARK: - FeedbackGeneratorConvertible Extension
-
-extension FeedbackGenerator.SemanticFeedback: FeedbackGeneratorConvertible {
-    // MARK: Public Instance Interface
-    
-    public var asFeedback: FeedbackGenerator.Feedback {
-        base
-    }
-}
-
-// MARK: - FeedbackGeneratorConvertible Definition
-
-public protocol FeedbackGeneratorConvertible {
-    // MARK: Public Instance Interface
-    
-    var asFeedback: FeedbackGenerator.Feedback { get }
 }
 
 #endif
