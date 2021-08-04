@@ -28,27 +28,3 @@ extension View {
         labelsHidden()
     }
 }
-
-#if canImport(Introspect)
-
-import Introspect
-
-extension View {
-    // MARK: Public Instance Interface
-    
-    public func navigationBarItemToClose(_ dismiss: DismissAction) -> some View {
-        introspectViewController { viewController in
-            viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(
-                systemItem: .close,
-                primaryAction: UIAction(
-                    handler: { _ in
-                        FeedbackGenerator.shared.generate(for: .dismissSheet)
-                        dismiss()
-                    }
-                )
-            )
-        }
-    }
-}
-
-#endif
