@@ -56,7 +56,7 @@ public final class FeedbackGenerator {
     
     @discardableResult
     public func generate(using receipt: Receipt) -> Receipt {
-        generate(receipt.feedbackAndPlatformGenerator).asReceipt
+        generate(receipt.feedbackAndGenerator).asReceipt
     }
     
     @discardableResult
@@ -88,10 +88,10 @@ public final class FeedbackGenerator {
     }
 
     public func prepare(_ feedback: Feedback) -> Receipt {
-        let feedbackAndPlatformGenerator = FeedbackAndPlatformGenerator.from(feedback)
-        feedbackAndPlatformGenerator.platformGenerator.prepare()
+        let feedbackAndGenerator = FeedbackAndGenerator.from(feedback)
+        feedbackAndGenerator.platformGenerator.prepare()
         
-        return Receipt(feedbackAndPlatformGenerator)
+        return Receipt(feedbackAndGenerator)
     }
 
     public func prepare(for semanticFeedback: SemanticFeedback) -> Receipt {
@@ -99,7 +99,7 @@ public final class FeedbackGenerator {
     }
     
     public func prepareAgain(_ receipt: Receipt) -> Receipt {
-        receipt.feedbackAndPlatformGenerator.platformGenerator.prepare()
+        receipt.feedbackAndGenerator.platformGenerator.prepare()
         
         return receipt
     }
@@ -152,13 +152,13 @@ public final class FeedbackGenerator {
     }
     
     private func generate(
-        _ feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator
-    ) -> FeedbackAndPlatformGenerator {
+        _ feedbackAndGenerator: FeedbackAndGenerator
+    ) -> FeedbackAndGenerator {
         guard isEnabled else {
-            return feedbackAndPlatformGenerator
+            return feedbackAndGenerator
         }
         
-        switch feedbackAndPlatformGenerator {
+        switch feedbackAndGenerator {
         case let .impact(impact, platformGenerator):
             generate(impact, using: platformGenerator)
         case let .notification(notification, platformGenerator):
@@ -167,7 +167,7 @@ public final class FeedbackGenerator {
             generate(selection, using: platformGenerator)
         }
         
-        return feedbackAndPlatformGenerator
+        return feedbackAndGenerator
     }
 }
 
@@ -282,17 +282,17 @@ extension FeedbackGenerator.Feedback {
     }
 }
 
-// MARK: - FeedbackGenerator.FeedbackAndPlatformGenerator Definition
+// MARK: - FeedbackGenerator.FeedbackAndGenerator Definition
 
 extension FeedbackGenerator {
-    internal enum FeedbackAndPlatformGenerator {
+    internal enum FeedbackAndGenerator {
         case impact(Feedback.Impact, UIImpactFeedbackGenerator)
         case notification(Feedback.Notification, UINotificationFeedbackGenerator)
         case selection(Feedback.Selection, UISelectionFeedbackGenerator)
         
         // MARK: Internal Static Interface
         
-        internal static func from(_ feedback: Feedback) -> FeedbackAndPlatformGenerator {
+        internal static func from(_ feedback: Feedback) -> FeedbackAndGenerator {
             switch feedback {
             case let .impact(feedback):
                 return .impact(feedback)
@@ -303,15 +303,15 @@ extension FeedbackGenerator {
             }
         }
         
-        internal static func impact(_ feedback: Feedback.Impact) -> FeedbackAndPlatformGenerator {
+        internal static func impact(_ feedback: Feedback.Impact) -> FeedbackAndGenerator {
             .impact(feedback, UIImpactFeedbackGenerator(style: feedback.platformType))
         }
         
-        internal static func notification(_ feedback: Feedback.Notification) -> FeedbackAndPlatformGenerator {
+        internal static func notification(_ feedback: Feedback.Notification) -> FeedbackAndGenerator {
             .notification(feedback, UINotificationFeedbackGenerator())
         }
         
-        internal static func selection(_ feedback: Feedback.Selection) -> FeedbackAndPlatformGenerator {
+        internal static func selection(_ feedback: Feedback.Selection) -> FeedbackAndGenerator {
             .selection(feedback, UISelectionFeedbackGenerator())
         }
         
@@ -338,12 +338,12 @@ extension FeedbackGenerator {
 
 extension FeedbackGenerator {
     public struct Receipt {
-        internal let feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator
+        internal let feedbackAndGenerator: FeedbackAndGenerator
         
         // MARK: Internal Initialization
         
-        internal init(_ feedbackAndPlatformGenerator: FeedbackAndPlatformGenerator) {
-            self.feedbackAndPlatformGenerator = feedbackAndPlatformGenerator
+        internal init(_ feedbackAndGenerator: FeedbackAndGenerator) {
+            self.feedbackAndGenerator = feedbackAndGenerator
         }
     }
 }
