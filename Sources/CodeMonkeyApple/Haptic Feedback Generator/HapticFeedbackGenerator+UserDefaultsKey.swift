@@ -9,6 +9,30 @@
 
 import UIKit
 
+// MARK: - Extension for HapticFeedback
+
+extension HapticFeedback {
+    // MARK: Public Instance Interface
+    
+    @inlinable
+    public static func setIsDisabled(
+        basedOn isDisabledKey: UserDefaultsKey<Bool>,
+        userDefaults: UserDefaults = .standard
+    ) {
+        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, userDefaults: userDefaults)
+    }
+    
+    @inlinable
+    public static func setIsEnabled(
+        basedOn isEnabledKey: UserDefaultsKey<Bool>,
+        userDefaults: UserDefaults = .standard
+    ) {
+        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isEnabledKey, userDefaults: userDefaults)
+    }
+}
+
+// MARK: - Extension for HapticFeedbackGenerator
+
 extension HapticFeedbackGenerator {
     // MARK: Public Initialization
     
