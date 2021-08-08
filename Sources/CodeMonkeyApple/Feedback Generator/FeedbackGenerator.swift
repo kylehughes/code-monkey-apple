@@ -54,36 +54,31 @@ public final class FeedbackGenerator {
     
     // MARK: Public Instance Interface
     
-    @discardableResult
-    public func generate(using preparedFeedback: PreparedFeedback) -> PreparedFeedback {
-        generate(preparedFeedback.feedbackAndGenerator).asPreparedFeedback
+    public func generate(using preparedFeedback: PreparedFeedback) {
+        generate(preparedFeedback.feedbackAndGenerator)
     }
     
-    @discardableResult
-    public func generate(_ feedback: Feedback?) -> PreparedFeedback? {
+    public func generate(_ feedback: Feedback?) {
         guard let feedback = feedback else {
-            return nil
+            return
         }
 
-        return generate(feedback)
+        generate(feedback)
     }
     
-    @discardableResult
-    public func generate(_ feedback: Feedback) -> PreparedFeedback {
-        generate(.from(feedback)).asPreparedFeedback
+    public func generate(_ feedback: Feedback) {
+        generate(.from(feedback))
     }
     
-    @discardableResult
-    public func generate(for semanticFeedback: SemanticFeedback?) -> PreparedFeedback? {
+    public func generate(for semanticFeedback: SemanticFeedback?) {
         guard let semanticFeedback = semanticFeedback else {
-            return nil
+            return
         }
 
-        return generate(semanticFeedback.base) as PreparedFeedback
+        generate(semanticFeedback.base)
     }
     
-    @discardableResult
-    public func generate(for semanticFeedback: SemanticFeedback) -> PreparedFeedback {
+    public func generate(for semanticFeedback: SemanticFeedback) {
         generate(semanticFeedback.base)
     }
 
@@ -153,9 +148,9 @@ public final class FeedbackGenerator {
     
     private func generate(
         _ feedbackAndGenerator: FeedbackAndGenerator
-    ) -> FeedbackAndGenerator {
+    ) {
         guard isEnabled else {
-            return feedbackAndGenerator
+            return
         }
         
         switch feedbackAndGenerator {
@@ -166,8 +161,6 @@ public final class FeedbackGenerator {
         case let .selection(selection, platformGenerator):
             generate(selection, using: platformGenerator)
         }
-        
-        return feedbackAndGenerator
     }
 }
 
