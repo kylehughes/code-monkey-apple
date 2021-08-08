@@ -16,7 +16,7 @@ public final class FeedbackGenerator {
     
     public static let shared = FeedbackGenerator()
     
-    private var isEnabledProvider: IsEnabledProvider?
+    private var isEnabledProvider: IsEnabledProvider
     
     // MARK: Public Initialization
     
@@ -49,13 +49,15 @@ public final class FeedbackGenerator {
     }
     
     public init() {
-        isEnabledProvider = nil
+        isEnabledProvider = {
+            true
+        }
     }
     
     // MARK: Public Instance Interface
     
     public func generate(using preparedFeedback: PreparedFeedback) {
-        generate(preparedFeedback.feedbackAndGenerator)
+        preparedFeedback()
     }
     
     public func generate(_ feedback: Feedback?) {
@@ -67,7 +69,7 @@ public final class FeedbackGenerator {
     }
     
     public func generate(_ feedback: Feedback) {
-        generate(.from(feedback))
+        FeedbackAndGenerator.from(feedback, isEnabledProvider)()
     }
     
     public func generate(for semanticFeedback: SemanticFeedback?) {
@@ -83,10 +85,7 @@ public final class FeedbackGenerator {
     }
 
     public func prepare(_ feedback: Feedback) -> PreparedFeedback {
-        let feedbackAndGenerator = FeedbackAndGenerator.from(feedback)
-        feedbackAndGenerator.platformGenerator.prepare()
-        
-        return PreparedFeedback(feedbackAndGenerator)
+        FeedbackAndGenerator.from(feedback, isEnabledProvider).prepare()
     }
 
     public func prepare(for semanticFeedback: SemanticFeedback) -> PreparedFeedback {
@@ -94,9 +93,7 @@ public final class FeedbackGenerator {
     }
     
     public func prepareAgain(_ preparedFeedback: PreparedFeedback) -> PreparedFeedback {
-        preparedFeedback.feedbackAndGenerator.platformGenerator.prepare()
-        
-        return preparedFeedback
+        preparedFeedback.prepareAgain()
     }
     
     public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
@@ -119,48 +116,6 @@ public final class FeedbackGenerator {
     
     public func setIsEnabled(basedOn isEnabledProvider: @escaping IsEnabledProvider) {
         self.isEnabledProvider = isEnabledProvider
-    }
-
-    // MARK: Private Instance Interface
-    
-    private var isEnabled: Bool {
-        isEnabledProvider?() ?? true
-    }
-
-    private func generate(_ feedback: Feedback.Impact, using platformGenerator: UIImpactFeedbackGenerator) {
-        if let intensity = feedback.intensity {
-            platformGenerator.impactOccurred(intensity: intensity)
-        } else {
-            platformGenerator.impactOccurred()
-        }
-    }
-    
-    private func generate(_ feedback: Feedback.Notification, using platformGenerator: UINotificationFeedbackGenerator) {
-        platformGenerator.notificationOccurred(feedback.platformType)
-    }
-    
-    private func generate(_ feedback: Feedback.Selection, using platformGenerator: UISelectionFeedbackGenerator) {
-        switch feedback {
-        case .selectionChanged:
-            platformGenerator.selectionChanged()
-        }
-    }
-    
-    private func generate(
-        _ feedbackAndGenerator: FeedbackAndGenerator
-    ) {
-        guard isEnabled else {
-            return
-        }
-        
-        switch feedbackAndGenerator {
-        case let .impact(impact, platformGenerator):
-            generate(impact, using: platformGenerator)
-        case let .notification(notification, platformGenerator):
-            generate(notification, using: platformGenerator)
-        case let .selection(selection, platformGenerator):
-            generate(selection, using: platformGenerator)
-        }
     }
 }
 
@@ -279,50 +234,82 @@ extension FeedbackGenerator.Feedback {
 
 extension FeedbackGenerator {
     internal enum FeedbackAndGenerator {
-        case impact(Feedback.Impact, UIImpactFeedbackGenerator)
-        case notification(Feedback.Notification, UINotificationFeedbackGenerator)
-        case selection(Feedback.Selection, UISelectionFeedbackGenerator)
+        case impact(Feedback.Impact, UIImpactFeedbackGenerator, IsEnabledProvider)
+        case notification(Feedback.Notification, UINotificationFeedbackGenerator, IsEnabledProvider)
+        case selection(Feedback.Selection, UISelectionFeedbackGenerator, IsEnabledProvider)
         
         // MARK: Internal Static Interface
         
-        internal static func from(_ feedback: Feedback) -> FeedbackAndGenerator {
+        internal static func from(
+            _ feedback: Feedback,
+            _ isEnabledProvider: @escaping IsEnabledProvider
+        ) -> FeedbackAndGenerator {
             switch feedback {
             case let .impact(feedback):
-                return .impact(feedback)
+                return .impact(feedback, isEnabledProvider)
             case let .notification(feedback):
-                return .notification(feedback)
+                return .notification(feedback, isEnabledProvider)
             case let .selection(feedback):
-                return .selection(feedback)
+                return .selection(feedback, isEnabledProvider)
             }
         }
         
-        internal static func impact(_ feedback: Feedback.Impact) -> FeedbackAndGenerator {
-            .impact(feedback, UIImpactFeedbackGenerator(style: feedback.platformType))
+        internal static func impact(
+            _ feedback: Feedback.Impact,
+            _ isEnabledProvider: @escaping IsEnabledProvider
+        ) -> FeedbackAndGenerator {
+            .impact(feedback, UIImpactFeedbackGenerator(style: feedback.platformType), isEnabledProvider)
         }
         
-        internal static func notification(_ feedback: Feedback.Notification) -> FeedbackAndGenerator {
-            .notification(feedback, UINotificationFeedbackGenerator())
+        internal static func notification(
+            _ feedback: Feedback.Notification,
+            _ isEnabledProvider: @escaping IsEnabledProvider
+        ) -> FeedbackAndGenerator {
+            .notification(feedback, UINotificationFeedbackGenerator(), isEnabledProvider)
         }
         
-        internal static func selection(_ feedback: Feedback.Selection) -> FeedbackAndGenerator {
-            .selection(feedback, UISelectionFeedbackGenerator())
+        internal static func selection(
+            _ feedback: Feedback.Selection,
+            _ isEnabledProvider: @escaping IsEnabledProvider
+        ) -> FeedbackAndGenerator {
+            .selection(feedback, UISelectionFeedbackGenerator(), isEnabledProvider)
         }
         
         // MARK: Internal Instance Interface
         
-        internal var asPreparedFeedback: PreparedFeedback {
-            PreparedFeedback(self)
+        internal func callAsFunction() {
+            switch self {
+            case let .impact(impact, platformGenerator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                if let intensity = impact.intensity {
+                    platformGenerator.impactOccurred(intensity: intensity)
+                } else {
+                    platformGenerator.impactOccurred()
+                }
+            case let .notification(notification, platformGenerator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                platformGenerator.notificationOccurred(notification.platformType)
+            case let .selection(selection, platformGenerator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                switch selection {
+                case .selectionChanged:
+                    platformGenerator.selectionChanged()
+                }
+            }
         }
         
-        internal var platformGenerator: UIFeedbackGenerator {
-            switch self {
-            case let .impact(_, platformGenerator):
-                return platformGenerator
-            case let .notification(_, platformGenerator):
-                return platformGenerator
-            case let .selection(_, platformGenerator):
-                return platformGenerator
-            }
+        @discardableResult
+        internal func prepare() -> PreparedFeedback {
+            PreparedFeedback(using: self)
         }
     }
 }
@@ -335,8 +322,21 @@ extension FeedbackGenerator {
         
         // MARK: Internal Initialization
         
-        internal init(_ feedbackAndGenerator: FeedbackAndGenerator) {
+        internal init(using feedbackAndGenerator: FeedbackAndGenerator) {
             self.feedbackAndGenerator = feedbackAndGenerator
+            
+            feedbackAndGenerator.prepare()
+        }
+        
+        // MARK: Public Instance Interface
+        
+        public func callAsFunction() {
+            feedbackAndGenerator()
+        }
+        
+        @discardableResult
+        public func prepareAgain() -> PreparedFeedback {
+            feedbackAndGenerator.prepare()
         }
     }
 }
@@ -346,7 +346,7 @@ extension FeedbackGenerator {
 
 extension FeedbackGenerator {
     public struct SemanticFeedback {
-        public let base: Feedback
+        internal let base: Feedback
         
         // MARK: Public Initialization
         
