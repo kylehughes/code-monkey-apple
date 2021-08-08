@@ -61,6 +61,11 @@ public enum HapticFeedback {
     }
     
     @inlinable
+    public static func setIsDisabled(_ isDisabled: Bool) {
+        HapticFeedbackGenerator.shared.setIsDisabled(isDisabled)
+    }
+    
+    @inlinable
     public static func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, in: userDefaults)
     }
@@ -68,6 +73,11 @@ public enum HapticFeedback {
     @inlinable
     public static func setIsDisabled(basedOn isDisabledProvider: @escaping HapticFeedbackGenerator.IsDisabledProvider) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledProvider)
+    }
+    
+    @inlinable
+    public static func setIsEnabled(_ isEnabled: Bool) {
+        HapticFeedbackGenerator.shared.setIsEnabled(isEnabled)
     }
     
     @inlinable
@@ -93,6 +103,14 @@ public final class HapticFeedbackGenerator {
     
     // MARK: Public Initialization
     
+    public convenience init(isDisabled: Bool) {
+        self.init(
+            isDisabledProvider: {
+                isDisabled
+            }
+        )
+    }
+    
     public convenience init(isDisabledKey: String, userDefaults: UserDefaults = .standard) {
         self.init(
             isDisabledProvider: {
@@ -109,6 +127,14 @@ public final class HapticFeedbackGenerator {
         )
     }
     
+    public convenience init(isEnabled: Bool) {
+        self.init(
+            isEnabledProvider: {
+                isEnabled
+            }
+        )
+    }
+    
     public convenience init(isEnabledKey: String, userDefaults: UserDefaults = .standard) {
         self.init(
             isEnabledProvider: {
@@ -117,14 +143,12 @@ public final class HapticFeedbackGenerator {
         )
     }
     
-    public init(isEnabledProvider: @escaping IsEnabledProvider) {
-        self.isEnabledProvider = isEnabledProvider
+    public convenience init() {
+        self.init(isEnabled: true)
     }
     
-    public init() {
-        isEnabledProvider = {
-            true
-        }
+    public init(isEnabledProvider: @escaping IsEnabledProvider) {
+        self.isEnabledProvider = isEnabledProvider
     }
     
     // MARK: Public Instance Interface
@@ -169,6 +193,12 @@ public final class HapticFeedbackGenerator {
         preparedFeedback.prepareAgain()
     }
     
+    public func setIsDisabled(_ isDisabled: Bool) {
+        setIsDisabled {
+            isDisabled
+        }
+    }
+    
     public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
         setIsDisabled {
             userDefaults.bool(forKey: isDisabledKey)
@@ -176,8 +206,14 @@ public final class HapticFeedbackGenerator {
     }
     
     public func setIsDisabled(basedOn isDisabledProvider: @escaping IsDisabledProvider) {
-        isEnabledProvider = {
+        setIsEnabled {
             not(isDisabledProvider())
+        }
+    }
+    
+    public func setIsEnabled(_ isEnabled: Bool) {
+        setIsEnabled {
+            isEnabled
         }
     }
     
