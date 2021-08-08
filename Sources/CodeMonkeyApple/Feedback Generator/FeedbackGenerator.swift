@@ -55,12 +55,12 @@ public final class FeedbackGenerator {
     // MARK: Public Instance Interface
     
     @discardableResult
-    public func generate(using receipt: Receipt) -> Receipt {
-        generate(receipt.feedbackAndGenerator).asReceipt
+    public func generate(using preparedFeedback: PreparedFeedback) -> PreparedFeedback {
+        generate(preparedFeedback.feedbackAndGenerator).asPreparedFeedback
     }
     
     @discardableResult
-    public func generate(_ feedback: Feedback?) -> Receipt? {
+    public func generate(_ feedback: Feedback?) -> PreparedFeedback? {
         guard let feedback = feedback else {
             return nil
         }
@@ -69,39 +69,39 @@ public final class FeedbackGenerator {
     }
     
     @discardableResult
-    public func generate(_ feedback: Feedback) -> Receipt {
-        generate(.from(feedback)).asReceipt
+    public func generate(_ feedback: Feedback) -> PreparedFeedback {
+        generate(.from(feedback)).asPreparedFeedback
     }
     
     @discardableResult
-    public func generate(for semanticFeedback: SemanticFeedback?) -> Receipt? {
+    public func generate(for semanticFeedback: SemanticFeedback?) -> PreparedFeedback? {
         guard let semanticFeedback = semanticFeedback else {
             return nil
         }
 
-        return generate(semanticFeedback.base) as Receipt
+        return generate(semanticFeedback.base) as PreparedFeedback
     }
     
     @discardableResult
-    public func generate(for semanticFeedback: SemanticFeedback) -> Receipt {
+    public func generate(for semanticFeedback: SemanticFeedback) -> PreparedFeedback {
         generate(semanticFeedback.base)
     }
 
-    public func prepare(_ feedback: Feedback) -> Receipt {
+    public func prepare(_ feedback: Feedback) -> PreparedFeedback {
         let feedbackAndGenerator = FeedbackAndGenerator.from(feedback)
         feedbackAndGenerator.platformGenerator.prepare()
         
-        return Receipt(feedbackAndGenerator)
+        return PreparedFeedback(feedbackAndGenerator)
     }
 
-    public func prepare(for semanticFeedback: SemanticFeedback) -> Receipt {
+    public func prepare(for semanticFeedback: SemanticFeedback) -> PreparedFeedback {
         prepare(semanticFeedback.base)
     }
     
-    public func prepareAgain(_ receipt: Receipt) -> Receipt {
-        receipt.feedbackAndGenerator.platformGenerator.prepare()
+    public func prepareAgain(_ preparedFeedback: PreparedFeedback) -> PreparedFeedback {
+        preparedFeedback.feedbackAndGenerator.platformGenerator.prepare()
         
-        return receipt
+        return preparedFeedback
     }
     
     public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
@@ -317,8 +317,8 @@ extension FeedbackGenerator {
         
         // MARK: Internal Instance Interface
         
-        internal var asReceipt: Receipt {
-            Receipt(self)
+        internal var asPreparedFeedback: PreparedFeedback {
+            PreparedFeedback(self)
         }
         
         internal var platformGenerator: UIFeedbackGenerator {
@@ -334,10 +334,10 @@ extension FeedbackGenerator {
     }
 }
 
-// MARK: - FeedbackGenerator.Receipt Definition
+// MARK: - FeedbackGenerator.PreparedFeedback Definition
 
 extension FeedbackGenerator {
-    public struct Receipt {
+    public struct PreparedFeedback {
         internal let feedbackAndGenerator: FeedbackAndGenerator
         
         // MARK: Internal Initialization
