@@ -306,14 +306,14 @@ extension HapticFeedbackGenerator.Feedback {
 // MARK: - HapticFeedbackGenerator.FeedbackAndGenerator Definition
 
 extension HapticFeedbackGenerator {
-    internal enum FeedbackAndGenerator {
+    fileprivate enum FeedbackAndGenerator {
         case impact(Feedback.Impact, UIImpactFeedbackGenerator, IsEnabledProvider)
         case notification(Feedback.Notification, UINotificationFeedbackGenerator, IsEnabledProvider)
         case selection(Feedback.Selection, UISelectionFeedbackGenerator, IsEnabledProvider)
         
-        // MARK: Internal Static Interface
+        // MARK: Fileprivate Static Interface
         
-        internal static func from(
+        fileprivate static func from(
             _ feedback: Feedback,
             _ isEnabledProvider: @escaping IsEnabledProvider
         ) -> FeedbackAndGenerator {
@@ -327,30 +327,30 @@ extension HapticFeedbackGenerator {
             }
         }
         
-        internal static func impact(
+        fileprivate static func impact(
             _ feedback: Feedback.Impact,
             _ isEnabledProvider: @escaping IsEnabledProvider
         ) -> FeedbackAndGenerator {
             .impact(feedback, UIImpactFeedbackGenerator(style: feedback.platformType), isEnabledProvider)
         }
         
-        internal static func notification(
+        fileprivate static func notification(
             _ feedback: Feedback.Notification,
             _ isEnabledProvider: @escaping IsEnabledProvider
         ) -> FeedbackAndGenerator {
             .notification(feedback, UINotificationFeedbackGenerator(), isEnabledProvider)
         }
         
-        internal static func selection(
+        fileprivate static func selection(
             _ feedback: Feedback.Selection,
             _ isEnabledProvider: @escaping IsEnabledProvider
         ) -> FeedbackAndGenerator {
             .selection(feedback, UISelectionFeedbackGenerator(), isEnabledProvider)
         }
         
-        // MARK: Internal Instance Interface
+        // MARK: Fileprivate Instance Interface
 
-        internal func callAsFunction() {
+        fileprivate func callAsFunction() {
             switch self {
             case let .impact(impact, generator, isEnabledProvider):
                 guard isEnabledProvider() else {
@@ -380,7 +380,7 @@ extension HapticFeedbackGenerator {
             }
         }
         
-        internal func prepare() {
+        fileprivate func prepare() {
             switch self {
             case let .impact(_, generator, isEnabledProvider):
                 guard isEnabledProvider() else {
@@ -409,11 +409,11 @@ extension HapticFeedbackGenerator {
 
 extension HapticFeedbackGenerator {
     public struct PreparedFeedback {
-        internal let feedbackAndGenerator: FeedbackAndGenerator
+        fileprivate let feedbackAndGenerator: FeedbackAndGenerator
         
-        // MARK: Internal Initialization
+        // MARK: Fileprivate Initialization
         
-        internal init(using feedbackAndGenerator: FeedbackAndGenerator) {
+        fileprivate init(using feedbackAndGenerator: FeedbackAndGenerator) {
             self.feedbackAndGenerator = feedbackAndGenerator
 
             feedbackAndGenerator.prepare()
@@ -435,7 +435,7 @@ extension HapticFeedbackGenerator {
 
 extension HapticFeedbackGenerator {
     public struct SemanticFeedback {
-        internal let base: Feedback
+        fileprivate let base: Feedback
         
         // MARK: Public Initialization
         
