@@ -1,5 +1,5 @@
 //
-//  FeedbackGenerator+UserDefaultsKey.swift
+//  HapticFeedbackGenerator+UserDefaultsKey.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 8/3/21.
@@ -9,7 +9,7 @@
 
 import UIKit
 
-extension FeedbackGenerator {
+extension HapticFeedbackGenerator {
     // MARK: Public Initialization
     
     public convenience init(isDisabledKey: UserDefaultsKey<Bool>, userDefaults: UserDefaults = .standard) {

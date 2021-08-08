@@ -1,5 +1,5 @@
 //
-//  FeedbackGenerator.swift
+//  HapticFeedbackGenerator.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 5/30/21.
@@ -10,11 +10,11 @@
 import Foundation
 import UIKit
 
-public final class FeedbackGenerator {
+public final class HapticFeedbackGenerator {
     public typealias IsDisabledProvider = () -> Bool
     public typealias IsEnabledProvider = () -> Bool
     
-    public static let shared = FeedbackGenerator()
+    public static let shared = HapticFeedbackGenerator()
     
     private var isEnabledProvider: IsEnabledProvider
     
@@ -119,9 +119,9 @@ public final class FeedbackGenerator {
     }
 }
 
-// MARK: - FeedbackGenerator.Feedback Definition
+// MARK: - HapticFeedbackGenerator.Feedback Definition
 
-extension FeedbackGenerator {
+extension HapticFeedbackGenerator {
     public enum Feedback: SynthesizedIdentifiable {
         case impact(Impact)
         case notification(Notification)
@@ -135,9 +135,9 @@ extension FeedbackGenerator {
     }
 }
 
-// MARK: - FeedbackGenerator.Feedback.Impact Definition
+// MARK: - HapticFeedbackGenerator.Feedback.Impact Definition
 
-extension FeedbackGenerator.Feedback {
+extension HapticFeedbackGenerator.Feedback {
     public enum Impact: SynthesizedIdentifiable {
         case heavy(CGFloat? = nil)
         case light(CGFloat? = nil)
@@ -199,9 +199,9 @@ extension FeedbackGenerator.Feedback {
     }
 }
 
-// MARK: - FeedbackGenerator.Feedback.Notification Definition
+// MARK: - HapticFeedbackGenerator.Feedback.Notification Definition
 
-extension FeedbackGenerator.Feedback {
+extension HapticFeedbackGenerator.Feedback {
     public enum Notification: SynthesizedIdentifiable {
         case error
         case success
@@ -222,17 +222,17 @@ extension FeedbackGenerator.Feedback {
     }
 }
 
-// MARK: - FeedbackGenerator.Feedback.Selection Definition
+// MARK: - HapticFeedbackGenerator.Feedback.Selection Definition
 
-extension FeedbackGenerator.Feedback {
+extension HapticFeedbackGenerator.Feedback {
     public enum Selection: SynthesizedIdentifiable {
         case selectionChanged
     }
 }
 
-// MARK: - FeedbackGenerator.FeedbackAndGenerator Definition
+// MARK: - HapticFeedbackGenerator.FeedbackAndGenerator Definition
 
-extension FeedbackGenerator {
+extension HapticFeedbackGenerator {
     internal enum FeedbackAndGenerator {
         case impact(Feedback.Impact, UIImpactFeedbackGenerator, IsEnabledProvider)
         case notification(Feedback.Notification, UINotificationFeedbackGenerator, IsEnabledProvider)
@@ -314,9 +314,9 @@ extension FeedbackGenerator {
     }
 }
 
-// MARK: - FeedbackGenerator.PreparedFeedback Definition
+// MARK: - HapticFeedbackGenerator.PreparedFeedback Definition
 
-extension FeedbackGenerator {
+extension HapticFeedbackGenerator {
     public struct PreparedFeedback {
         internal let feedbackAndGenerator: FeedbackAndGenerator
         
@@ -342,9 +342,9 @@ extension FeedbackGenerator {
 }
 
 
-// MARK: - FeedbackGenerator.SemanticFeedback Definition
+// MARK: - HapticFeedbackGenerator.SemanticFeedback Definition
 
-extension FeedbackGenerator {
+extension HapticFeedbackGenerator {
     public struct SemanticFeedback {
         internal let base: Feedback
         
