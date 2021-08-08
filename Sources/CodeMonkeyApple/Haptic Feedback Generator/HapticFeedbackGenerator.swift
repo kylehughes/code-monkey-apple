@@ -85,14 +85,14 @@ public final class HapticFeedbackGenerator {
     }
 
     public func prepare(_ feedback: Feedback) -> PreparedFeedback {
-        FeedbackAndGenerator.from(feedback, isEnabledProvider).prepare()
+        PreparedFeedback(using: .from(feedback, isEnabledProvider))
     }
 
     public func prepare(for semanticFeedback: SemanticFeedback) -> PreparedFeedback {
         prepare(semanticFeedback.base)
     }
     
-    public func prepareAgain(_ preparedFeedback: PreparedFeedback) -> PreparedFeedback {
+    public func prepareAgain(_ preparedFeedback: PreparedFeedback) {
         preparedFeedback.prepareAgain()
     }
     
@@ -276,40 +276,58 @@ extension HapticFeedbackGenerator {
         }
         
         // MARK: Internal Instance Interface
-        
+
         internal func callAsFunction() {
             switch self {
-            case let .impact(impact, platformGenerator, isEnabledProvider):
+            case let .impact(impact, generator, isEnabledProvider):
                 guard isEnabledProvider() else {
                     return
                 }
                 
                 if let intensity = impact.intensity {
-                    platformGenerator.impactOccurred(intensity: intensity)
+                    generator.impactOccurred(intensity: intensity)
                 } else {
-                    platformGenerator.impactOccurred()
+                    generator.impactOccurred()
                 }
-            case let .notification(notification, platformGenerator, isEnabledProvider):
+            case let .notification(notification, generator, isEnabledProvider):
                 guard isEnabledProvider() else {
                     return
                 }
                 
-                platformGenerator.notificationOccurred(notification.platformType)
-            case let .selection(selection, platformGenerator, isEnabledProvider):
+                generator.notificationOccurred(notification.platformType)
+            case let .selection(selection, generator, isEnabledProvider):
                 guard isEnabledProvider() else {
                     return
                 }
                 
                 switch selection {
                 case .selectionChanged:
-                    platformGenerator.selectionChanged()
+                    generator.selectionChanged()
                 }
             }
         }
         
-        @discardableResult
-        internal func prepare() -> PreparedFeedback {
-            PreparedFeedback(using: self)
+        internal func prepare() {
+            switch self {
+            case let .impact(_, generator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                generator.prepare()
+            case let .notification(_, generator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                generator.prepare()
+            case let .selection(_, generator, isEnabledProvider):
+                guard isEnabledProvider() else {
+                    return
+                }
+                
+                generator.prepare()
+            }
         }
     }
 }
@@ -324,7 +342,7 @@ extension HapticFeedbackGenerator {
         
         internal init(using feedbackAndGenerator: FeedbackAndGenerator) {
             self.feedbackAndGenerator = feedbackAndGenerator
-            
+
             feedbackAndGenerator.prepare()
         }
         
@@ -334,8 +352,7 @@ extension HapticFeedbackGenerator {
             feedbackAndGenerator()
         }
         
-        @discardableResult
-        public func prepareAgain() -> PreparedFeedback {
+        public func prepareAgain() {
             feedbackAndGenerator.prepare()
         }
     }
