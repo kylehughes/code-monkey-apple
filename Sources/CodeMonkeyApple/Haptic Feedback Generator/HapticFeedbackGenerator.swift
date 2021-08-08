@@ -20,49 +20,49 @@ public enum HapticFeedback {
         HapticFeedbackGenerator.shared.generate(using: preparedFeedback)
     }
     
-    public func generate(_ feedback: HapticFeedbackGenerator.Feedback?) {
+    public static func generate(_ feedback: HapticFeedbackGenerator.Feedback?) {
         HapticFeedbackGenerator.shared.generate(feedback)
     }
     
-    public func generate(_ feedback: HapticFeedbackGenerator.Feedback) {
+    public static func generate(_ feedback: HapticFeedbackGenerator.Feedback) {
         HapticFeedbackGenerator.shared.generate(feedback)
     }
     
-    public func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback?) {
+    public static func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback?) {
         HapticFeedbackGenerator.shared.generate(for: semanticFeedback)
     }
     
-    public func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback) {
+    public static func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback) {
         HapticFeedbackGenerator.shared.generate(for: semanticFeedback)
     }
 
-    public func prepare(_ feedback: HapticFeedbackGenerator.Feedback) -> HapticFeedbackGenerator.PreparedFeedback {
+    public static func prepare(_ feedback: HapticFeedbackGenerator.Feedback) -> HapticFeedbackGenerator.PreparedFeedback {
         HapticFeedbackGenerator.shared.prepare(feedback)
     }
 
-    public func prepare(
+    public static func prepare(
         for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback
     ) -> HapticFeedbackGenerator.PreparedFeedback {
         HapticFeedbackGenerator.shared.prepare(for: semanticFeedback)
     }
     
-    public func prepareAgain(_ preparedFeedback: HapticFeedbackGenerator.PreparedFeedback) {
+    public static func prepareAgain(_ preparedFeedback: HapticFeedbackGenerator.PreparedFeedback) {
         HapticFeedbackGenerator.shared.prepareAgain(preparedFeedback)
     }
     
-    public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
+    public static func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, in: userDefaults)
     }
     
-    public func setIsDisabled(basedOn isDisabledProvider: @escaping HapticFeedbackGenerator.IsDisabledProvider) {
+    public static func setIsDisabled(basedOn isDisabledProvider: @escaping HapticFeedbackGenerator.IsDisabledProvider) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledProvider)
     }
     
-    public func setIsEnabled(basedOn isEnabledKey: String, in userDefaults: UserDefaults = .standard) {
+    public static func setIsEnabled(basedOn isEnabledKey: String, in userDefaults: UserDefaults = .standard) {
         HapticFeedbackGenerator.shared.setIsEnabled(basedOn: isEnabledKey, in: userDefaults)
     }
     
-    public func setIsEnabled(basedOn isEnabledProvider: @escaping HapticFeedbackGenerator.IsEnabledProvider) {
+    public static func setIsEnabled(basedOn isEnabledProvider: @escaping HapticFeedbackGenerator.IsEnabledProvider) {
         HapticFeedbackGenerator.shared.setIsEnabled(basedOn: isEnabledProvider)
     }
 }
