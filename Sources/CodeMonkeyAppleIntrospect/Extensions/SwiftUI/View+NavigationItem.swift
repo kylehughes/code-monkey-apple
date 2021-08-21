@@ -5,7 +5,7 @@
 //  Created by Kyle Hughes on 8/15/21.
 //
 
-#if canImport(Introspect)
+#if canImport(Introspect) && canImport(UIKit)
 import CodeMonkeyApple
 import Introspect
 import SwiftUI
