@@ -5,7 +5,7 @@
 //  Created by Kyle Hughes on 6/1/21.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 
 import CodeMonkeyApple
 import Introspect

@@ -5,7 +5,7 @@
 //  Created by Kyle Hughes on 8/14/21.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 
 extension HapticFeedbackGenerator.SemanticFeedback {
     public static let dismissSheet = Self(.impact(.light))

@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 import PackageDescription
 
@@ -35,7 +35,11 @@ let package = Package(
             name: "CodeMonkeyAppleIntrospect",
             dependencies: [
                 "CodeMonkeyApple",
-                .product(name: "Introspect", package: "SwiftUI-Introspect"),
+                .product(
+                    name: "Introspect",
+                    package: "SwiftUI-Introspect",
+                    condition: .when(platforms: [.iOS, .macOS])
+                ),
             ]
         ),
         .testTarget(
