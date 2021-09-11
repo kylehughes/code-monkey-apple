@@ -76,7 +76,7 @@ extension Publisher where Output: Equatable {
 
 // MARK: - Extension for Structured Concurrency Interoperability
 
-@available(iOS 15, macOS 12, watchOS 8)
+@available(iOS 15, macOS 12, watchOS 8, *)
 extension Publisher {
     // MARK: Public Instance Interface
     
