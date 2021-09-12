@@ -107,7 +107,17 @@ extension UserDefaults {
     }
     
     @inlinable
-    public func setValue(_ value: Any?, for key: UserDefaultsKey<Any>) {
+    public func setValue(_ value: Any, for key: UserDefaultsKey<Any>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: Any, for key: UserDefaultsKey<Any?>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: Any?, for key: UserDefaultsKey<Any?>) {
         set(value, forKey: key.key)
     }
     
@@ -123,6 +133,31 @@ extension UserDefaults {
     
     @inlinable
     public func setValue(_ value: Int, for key: UserDefaultsKey<Int>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: String, for key: UserDefaultsKey<String>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: String, for key: UserDefaultsKey<String?>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: String?, for key: UserDefaultsKey<String?>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: URL, for key: UserDefaultsKey<URL>) {
+        set(value, forKey: key.key)
+    }
+    
+    @inlinable
+    public func setValue(_ value: URL, for key: UserDefaultsKey<URL?>) {
         set(value, forKey: key.key)
     }
     
