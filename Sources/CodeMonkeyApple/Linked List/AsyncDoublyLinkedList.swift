@@ -141,7 +141,8 @@ public final actor AsyncDoublyLinkedList<Value> {
     }
     
     /// - Complexity: O(1)
-    public func remove(node: Node) async {
+    @discardableResult
+    public func remove(node: Node) async -> Node {
         if node === head {
             head = nil
         }
@@ -151,12 +152,34 @@ public final actor AsyncDoublyLinkedList<Value> {
         }
         
         await node.previous?.update(next: node.next)
+        
+        return node
     }
     
     /// - Complexity: O(1)
     public func removeAll() {
         head = nil
         tail = nil
+    }
+    
+    /// - Complexity: O(1)
+    @discardableResult
+    public func removeHead() async -> Node? {
+        guard let head = head else {
+            return nil
+        }
+
+        return await remove(node: head)
+    }
+    
+    /// - Complexity: O(1)
+    @discardableResult
+    public func removeTail() async -> Node? {
+        guard let tail = tail else {
+            return nil
+        }
+
+        return await remove(node: tail)
     }
 }
 
