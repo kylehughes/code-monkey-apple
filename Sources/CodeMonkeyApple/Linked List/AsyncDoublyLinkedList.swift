@@ -15,18 +15,24 @@ public final actor AsyncDoublyLinkedList<Value> {
     
     // MARK: Public Initialization
     
+    public convenience init<Sequence>(
+        _ initialValues: Sequence
+    ) async where Sequence: Swift.Sequence, Sequence.Element == Value {
+        self.init()
+        
+        for value in initialValues {
+            await append(value)
+        }
+    }
+    
+    public convenience init(_ initialValue: Value) {
+        self.init(initialNode: Node(initialValue))
+    }
+    
     public init() {
         count = 0
         head = nil
         tail = nil
-    }
-    
-    public init(_ initialValue: Value) {
-        count = 1
-        
-        let initialNode = Node(value: initialValue)
-        head = initialNode
-        tail = initialNode
     }
     
     // MARK: Private Initialization
@@ -40,7 +46,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     // MARK: Public Static Interface
     
     public static func makeWithNode(_ initialValue: Value) -> (AsyncDoublyLinkedList, Node) {
-        let initialNode = Node(value: initialValue)
+        let initialNode = Node(initialValue)
         let list = Self(initialNode: initialNode)
         
         return (list, initialNode)
@@ -60,7 +66,7 @@ public final actor AsyncDoublyLinkedList<Value> {
             count += 1
         }
         
-        let node = Node(value: value)
+        let node = Node(value)
         
         guard let _ = head, let tail = tail else {
             self.head = node
@@ -104,7 +110,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     /// - Complexity: O(1)
     @discardableResult
     public func insert(_ value: Value, after existingNode: Node) async -> Node {
-        let node = Node(value: value)
+        let node = Node(value)
         await existingNode.update(next: node)
         
         return node
@@ -118,7 +124,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     /// - Complexity: O(1)
     @discardableResult
     public func prepend(_ value: Value) async -> Node {
-        let node = Node(value: value)
+        let node = Node(value)
         
         guard let head = head, let _ = tail else {
             self.head = node
@@ -138,22 +144,6 @@ public final actor AsyncDoublyLinkedList<Value> {
     /// - Complexity: O(1)
     public func prepend(value: Value) async -> Node {
         await prepend(value)
-    }
-    
-    /// - Complexity: O(1)
-    @discardableResult
-    public func remove(node: Node) async -> Node {
-        if node === head {
-            head = nil
-        }
-        
-        if node === tail {
-            tail = nil
-        }
-        
-        await node.previous?.update(next: node.next)
-        
-        return node
     }
     
     /// - Complexity: O(1)
@@ -180,6 +170,26 @@ public final actor AsyncDoublyLinkedList<Value> {
         }
 
         return await remove(node: tail)
+    }
+    
+    // MARK: Private Instance Interface
+    
+    /// - Complexity: O(1)
+    @discardableResult
+    private func remove(node: Node) async -> Node {
+        if node === head {
+            head = await node.next
+        }
+        
+        if node === tail {
+            await tail = node.previous
+        }
+        
+        await node.previous?.update(next: node.next)
+        
+        count -= 1
+        
+        return node
     }
 }
 
@@ -283,7 +293,7 @@ extension AsyncDoublyLinkedList {
         
         // MARK: Public Initialization
         
-        public init(value: Value) {
+        public init(_ value: Value) {
             self.value = value
             
             id = UUID()
