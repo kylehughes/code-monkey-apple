@@ -26,6 +26,11 @@ extension UserDefaults {
     }
     
     @inlinable
+    public func getValue(for key: UserDefaultsKey<Bool>) -> Bool? {
+        bool(forKey: key.key)
+    }
+    
+    @inlinable
     public func getValue(for key: UserDefaultsKey<Data>) -> Data {
         data(forKey: key.key) ?? key.defaultValue
     }
