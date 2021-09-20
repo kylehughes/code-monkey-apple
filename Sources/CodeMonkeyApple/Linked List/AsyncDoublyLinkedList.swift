@@ -182,7 +182,7 @@ public final actor AsyncDoublyLinkedList<Value> {
         }
         
         if node === tail {
-            await tail = node.previous
+            tail = await node.previous
         }
         
         await node.previous?.update(next: node.next)
@@ -259,7 +259,7 @@ extension AsyncDoublyLinkedList {
     }
 }
 
-// MARK: - IteratorProtocol Extension
+// MARK: - AsyncIteratorProtocol Extension
 
 extension AsyncDoublyLinkedList.Iterator: AsyncIteratorProtocol {
     // MARK: Public Instance Interface
