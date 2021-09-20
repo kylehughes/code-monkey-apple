@@ -285,7 +285,7 @@ extension AsyncDoublyLinkedList.Iterator: AsyncIteratorProtocol {
 
 extension AsyncDoublyLinkedList {
     public final actor Node: Identifiable {
-        public let id: UUID
+        public nonisolated let id: UUID
         
         public private(set) var next: Node?
         public private(set) var previous: Node?

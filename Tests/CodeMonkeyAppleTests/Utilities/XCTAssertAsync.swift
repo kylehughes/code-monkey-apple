@@ -9,7 +9,7 @@ import XCTest
 
 // MARK: - Public Global Interface
 
-public func XCTAssertEqualAsync<T>(
+public func XCTAsyncAssertEqual<T>(
     _ expression1: @autoclosure () async throws -> T,
     _ expression2: @autoclosure () async throws -> T,
     _ message: @autoclosure () -> String = "",
@@ -21,7 +21,7 @@ public func XCTAssertEqualAsync<T>(
     XCTAssertEqual(value1, value2, message(), file: file, line: line)
 }
 
-public func XCTAssertNilAsync(
+public func XCTAsyncAssertNil(
     _ expression: @autoclosure () async throws -> Any?,
     _ message: @autoclosure () -> String = "",
     file: StaticString = #filePath,
@@ -31,7 +31,7 @@ public func XCTAssertNilAsync(
     XCTAssertNil(value, message(), file: file, line: line)
 }
 
-public func XCTAssertNotNilAsync(
+public func XCTAsyncAssertNotNil(
     _ expression: @autoclosure () async throws -> Any?,
     _ message: @autoclosure () -> String = "",
     file: StaticString = #filePath,
@@ -39,4 +39,14 @@ public func XCTAssertNotNilAsync(
 ) async rethrows {
     let value = try await expression()
     XCTAssertNotNil(value, message(), file: file, line: line)
+}
+
+public func XCTAsyncUnwrap<T>(
+    _ expression: @autoclosure () async throws -> T?,
+    _ message: @autoclosure () -> String = "",
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async throws -> T {
+    let value = try await expression()
+    return try XCTUnwrap(value, message(), file: file, line: line)
 }
