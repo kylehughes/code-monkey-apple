@@ -28,7 +28,6 @@ extension AsyncDoublyLinkedListTests {
     func test_init() async throws {
         let instance = AsyncDoublyLinkedList<Int>()
         
-        await XCTAsyncAssertEqual(await instance.count, 0)
         await XCTAsyncAssertNil(await instance.head)
         await XCTAsyncAssertNil(await instance.tail)
     }
@@ -42,7 +41,6 @@ extension AsyncDoublyLinkedListTests {
         
         XCTAssertEqual(headNode.id, tailNode.id)
 
-        await XCTAsyncAssertEqual(await instance.count, 1)
         await XCTAsyncAssertEqual(await headNode.value, value)
         await XCTAsyncAssertNotNil(await instance.head)
         await XCTAsyncAssertNotNil(await instance.tail)
@@ -55,7 +53,6 @@ extension AsyncDoublyLinkedListTests {
         
         await instance.removeTail()
         
-        await XCTAsyncAssertEqual(await instance.count, 0)
         await XCTAsyncAssertNil(await instance.tail)
     }
     
@@ -72,9 +69,7 @@ extension AsyncDoublyLinkedListTests {
         XCTAssertEqual(originalHeadNode.id, currentHeadNode.id)
         XCTAssertEqual(originalTailNode.id, removedNode.id)
         XCTAssertNotEqual(originalTailNode.id, currentTailNode.id)
-        
-        await XCTAsyncAssertEqual(await instance.count, values.count - 1)
-        
+                
         await XCTAsyncAssertEqual(await currentTailNode.value, values.dropLast().last)
         await XCTAsyncAssertNil(await currentTailNode.next)
         await XCTAsyncAssertNotNil(await currentTailNode.previous)
@@ -90,7 +85,6 @@ extension AsyncDoublyLinkedListTests {
         
         let removedNode = try await XCTAsyncUnwrap(await instance.removeTail())
         
-        await XCTAsyncAssertEqual(await instance.count, 0)
         await XCTAsyncAssertNil(await instance.head)
         await XCTAsyncAssertNil(await instance.tail)
         
@@ -113,9 +107,7 @@ extension AsyncDoublyLinkedListTests {
         XCTAssertEqual(originalHeadNode.id, currentTailNode.id)
         XCTAssertEqual(originalTailNode.id, removedNode.id)
         XCTAssertNotEqual(originalTailNode.id, currentTailNode.id)
-        
-        await XCTAsyncAssertEqual(await instance.count, values.count - 1)
-        
+                
         await XCTAsyncAssertEqual(await currentTailNode.value, values.dropLast().last)
         await XCTAsyncAssertNil(await currentTailNode.next)
         await XCTAsyncAssertNil(await currentTailNode.previous)
