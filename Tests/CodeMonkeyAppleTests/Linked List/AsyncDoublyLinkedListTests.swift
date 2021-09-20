@@ -48,6 +48,32 @@ extension AsyncDoublyLinkedListTests {
     
     // MARK: Removal Tests
     
+    func test_removeAfter_many() async throws {
+        let values = [1, 2, 3, 4]
+        let instance = await AsyncDoublyLinkedList<Int>(values)
+        
+        let originalHeadNode = try await XCTAsyncUnwrap(await instance.head)
+        let originalTailNode = try await XCTAsyncUnwrap(await instance.tail)
+        let targetNode = try await XCTAsyncUnwrap(await instance.head?.next)
+        
+        await instance.remove(after: targetNode)
+        
+        let currentHeadNode = try await XCTAsyncUnwrap(await instance.head)
+        let currentTailNode = try await XCTAsyncUnwrap(await instance.tail)
+        
+        XCTAssertEqual(originalHeadNode.id, currentHeadNode.id)
+        XCTAssertEqual(targetNode.id, currentTailNode.id)
+        XCTAssertNotEqual(originalTailNode.id, currentTailNode.id)
+        
+        var count = 0
+        
+        for await _ in instance {
+            count += 1
+        }
+        
+        XCTAssertEqual(count, 2)
+    }
+    
     func test_removeTail_none() async {
         let instance = AsyncDoublyLinkedList<Int>()
         

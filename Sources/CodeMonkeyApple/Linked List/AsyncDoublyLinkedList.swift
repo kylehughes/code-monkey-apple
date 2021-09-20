@@ -203,6 +203,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     }
     
     /// - Complexity: O(1)
+    // TODO: this apparently doesn't work
     private func _remove(after node: Node) async {
         await node.update(next: nil)
         tail = node
