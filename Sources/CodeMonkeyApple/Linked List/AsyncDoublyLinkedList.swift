@@ -172,6 +172,10 @@ public final actor AsyncDoublyLinkedList<Value> {
         return await remove(node: tail)
     }
     
+    public func reversed() -> Reversed {
+        Reversed(self)
+    }
+    
     // MARK: Private Instance Interface
     
     /// - Complexity: O(1)
@@ -366,5 +370,69 @@ extension AsyncDoublyLinkedList {
         private func set(previous: Node?) {
             self.previous = previous
         }
+    }
+}
+
+// MARK: - AsyncDoublyLinkedList.ReverseIterator Definition
+
+extension AsyncDoublyLinkedList {
+    public struct ReverseIterator {
+        public let list: AsyncDoublyLinkedList
+        
+        public private(set) var current: Node?
+        
+        // MARK: Public Initialization
+        
+        public init(list: AsyncDoublyLinkedList) {
+            self.list = list
+        }
+    }
+}
+
+// MARK: - AsyncIteratorProtocol Extension
+
+extension AsyncDoublyLinkedList.ReverseIterator: AsyncIteratorProtocol {
+    // MARK: Public Instance Interface
+    
+    public mutating func next() async -> AsyncDoublyLinkedList.Node? {
+        guard let current = current else {
+            let tail = await list.tail
+            
+            self.current = tail
+            
+            return tail
+        }
+        
+        let previous = await current.previous
+        
+        self.current = previous
+        
+        return previous
+    }
+}
+
+// MARK: - AsyncDoublyLinkedList.Reversed Definition
+
+extension AsyncDoublyLinkedList {
+    public struct Reversed {
+        private let base: AsyncDoublyLinkedList
+        
+        // MARK: Internal Initialization
+        
+        init(_ base: AsyncDoublyLinkedList) {
+            self.base = base
+        }
+    }
+}
+
+// MARK: - AsyncSequence Extension
+
+extension AsyncDoublyLinkedList.Reversed: AsyncSequence {
+    public typealias Element = AsyncDoublyLinkedList.Node
+    
+    // MARK: Public Instance Interface
+    
+    public func makeAsyncIterator() -> AsyncDoublyLinkedList.ReverseIterator {
+        AsyncDoublyLinkedList.ReverseIterator(list: base)
     }
 }
