@@ -172,7 +172,7 @@ public final actor AsyncDoublyLinkedList<Value> {
         return await remove(node: tail)
     }
     
-    public func reversed() -> Reversed {
+    public nonisolated func reversed() -> Reversed {
         Reversed(self)
     }
     
