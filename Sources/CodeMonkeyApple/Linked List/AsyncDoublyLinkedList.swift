@@ -289,18 +289,14 @@ extension AsyncDoublyLinkedList.Iterator: AsyncIteratorProtocol {
     
     public mutating func next() async -> AsyncDoublyLinkedList.Node? {
         guard let current = current else {
-            let head = await list.head
+            self.current = await list.head
             
-            self.current = head
-            
-            return head
+            return self.current
         }
         
-        let next = await current.next
+        self.current = await current.next
         
-        self.current = next
-        
-        return next
+        return self.current
     }
 }
 
@@ -422,18 +418,14 @@ extension AsyncDoublyLinkedList.ReverseIterator: AsyncIteratorProtocol {
     
     public mutating func next() async -> AsyncDoublyLinkedList.Node? {
         guard let current = current else {
-            let tail = await list.tail
+            self.current = await list.tail
             
-            self.current = tail
-            
-            return tail
+            return self.current
         }
         
-        let previous = await current.previous
+        self.current = await current.previous
         
-        self.current = previous
-        
-        return previous
+        return self.current
     }
 }
 
