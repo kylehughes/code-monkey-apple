@@ -30,7 +30,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     
     public init(_ initialValue: Value) {
         let id = UUID()
-        self.id = UUID()
+        self.id = id
         
         let initialNode = Node(initialValue, in: id)
         head = initialNode
@@ -211,8 +211,8 @@ public final actor AsyncDoublyLinkedList<Value> {
     
     /// - Complexity: O(1)
     private func _remove(afterAndIncluding node: Node) async {
-        await node.previous?.update(next: nil)
         tail = await node.previous
+        await node.previous?.update(next: nil)
     }
 }
 
