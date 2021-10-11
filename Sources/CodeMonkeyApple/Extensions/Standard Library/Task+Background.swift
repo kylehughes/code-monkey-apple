@@ -12,12 +12,11 @@ import UIKit
 extension Task {
     // MARK: Public Static Interface
     
-    @MainActor
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async -> Success
-    ) async -> Self where Failure == Never {
+    ) -> Self where Failure == Never {
         #if canImport(UIKit) && !os(watchOS)
         Task(priority: priority) {
             await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
@@ -27,12 +26,11 @@ extension Task {
         #endif
     }
     
-    @MainActor
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async throws -> Success
-    ) async -> Self where Failure == Error {
+    ) -> Self where Failure == Error {
         #if canImport(UIKit) && !os(watchOS)
         Task(priority: priority) {
             try await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
@@ -42,12 +40,11 @@ extension Task {
         #endif
     }
     
-    @MainActor
     public static func backgroundableAndDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async -> Success
-    ) async -> Self where Failure == Never {
+    ) -> Self where Failure == Never {
         #if canImport(UIKit) && !os(watchOS)
         Task.detached(priority: priority) {
             await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
@@ -57,12 +54,11 @@ extension Task {
         #endif
     }
     
-    @MainActor
     public static func backgroundableAndDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async throws -> Success
-    ) async -> Self where Failure == Error {
+    ) -> Self where Failure == Error {
         #if canImport(UIKit) && !os(watchOS)
         Task.detached(priority: priority) {
             try await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
