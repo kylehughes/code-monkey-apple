@@ -12,6 +12,7 @@ import UIKit
 extension Task {
     // MARK: Public Static Interface
     
+    @discardableResult
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
@@ -26,6 +27,7 @@ extension Task {
         #endif
     }
     
+    @discardableResult
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
@@ -40,6 +42,7 @@ extension Task {
         #endif
     }
     
+    @discardableResult
     public static func backgroundableAndDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
@@ -54,6 +57,7 @@ extension Task {
         #endif
     }
     
+    @discardableResult
     public static func backgroundableAndDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
