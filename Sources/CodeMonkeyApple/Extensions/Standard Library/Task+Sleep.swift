@@ -7,7 +7,7 @@
 
 import Foundation
 
-@available(iOS 15, macOS 15, tvOS 15, watchOS 8, *)
+@available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 extension Task where Success == Never, Failure == Never {
     // MARK: Public Static Interface
     
