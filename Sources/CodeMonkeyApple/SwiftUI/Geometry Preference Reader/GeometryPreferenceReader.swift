@@ -62,7 +62,16 @@ extension View {
         }
     }
     
-    public func read<Key: PreferenceKey, Value>(_ preference: GeometryPreferenceReader<Key, Value>) -> some View {
+    public func read<Key, Value>(
+        key: Key.Type,
+        value: @escaping (GeometryProxy) -> Value
+    ) -> some View where Key: PreferenceKey, Key.Value == Value {
+        read(GeometryPreferenceReader(key: key, value: value))
+    }
+    
+    public func read<Key, Value>(
+        _ preference: GeometryPreferenceReader<Key, Value>
+    ) -> some View where Key: PreferenceKey {
         modifier(preference)
     }
 }
