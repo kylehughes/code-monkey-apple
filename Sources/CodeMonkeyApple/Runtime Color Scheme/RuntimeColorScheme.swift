@@ -45,6 +45,26 @@ public enum RuntimeColorScheme: String, Codable, SynthesizedIdentifiable {
     }
 }
 
+// MARK: - Storable Extension
+
+extension RuntimeColorScheme: Storable {
+    // MARK: Public Static Interface
+    
+    public static func decode(from storage: @autoclosure () -> String?) -> RuntimeColorScheme? {
+        guard let rawValue = storage() else {
+            return nil
+        }
+        
+        return RuntimeColorScheme(rawValue: rawValue)
+    }
+    
+    // MARK: Public Instance Interface
+    
+    public func encodeForStorage() -> String {
+        rawValue
+    }
+}
+
 // MARK: - Extension for View
 
 extension View {
