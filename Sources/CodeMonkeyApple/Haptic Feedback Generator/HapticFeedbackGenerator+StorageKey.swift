@@ -1,5 +1,5 @@
 //
-//  HapticFeedbackGenerator+UserDefaultsKey.swift
+//  HapticFeedbackGenerator+StorageKey.swift
 //  CodeMonkeyApple
 //
 //  Created by Kyle Hughes on 8/3/21.
@@ -16,7 +16,7 @@ extension HapticFeedback {
     
     @inlinable
     public static func setIsDisabled(
-        basedOn isDisabledKey: UserDefaultsKey<Bool>,
+        basedOn isDisabledKey: StorageKey<Bool>,
         userDefaults: UserDefaults = .standard
     ) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, userDefaults: userDefaults)
@@ -24,7 +24,7 @@ extension HapticFeedback {
     
     @inlinable
     public static func setIsEnabled(
-        basedOn isEnabledKey: UserDefaultsKey<Bool>,
+        basedOn isEnabledKey: StorageKey<Bool>,
         userDefaults: UserDefaults = .standard
     ) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isEnabledKey, userDefaults: userDefaults)
@@ -36,33 +36,33 @@ extension HapticFeedback {
 extension HapticFeedbackGenerator {
     // MARK: Public Initialization
     
-    public convenience init(isDisabledKey: UserDefaultsKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public convenience init(isDisabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
         self.init(
             isDisabledProvider: {
-                userDefaults.getValue(for: isDisabledKey)
+                userDefaults.get(isDisabledKey)
             }
         )
     }
     
-    public convenience init(isEnabledKey: UserDefaultsKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public convenience init(isEnabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
         self.init(
             isEnabledProvider: {
-                userDefaults.getValue(for: isEnabledKey)
+                userDefaults.get(isEnabledKey)
             }
         )
     }
     
     // MARK: Public Instance Interface
     
-    public func setIsDisabled(basedOn isDisabledKey: UserDefaultsKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public func setIsDisabled(basedOn isDisabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
         setIsDisabled {
-            userDefaults.getValue(for: isDisabledKey)
+            userDefaults.get(isDisabledKey)
         }
     }
     
-    public func setIsEnabled(basedOn isEnabledKey: UserDefaultsKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public func setIsEnabled(basedOn isEnabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
         setIsEnabled {
-            userDefaults.getValue(for: isEnabledKey)
+            userDefaults.get(isEnabledKey)
         }
     }
 }
