@@ -10,7 +10,45 @@ import SwiftUI
 extension AppStorage {
     // MARK: Public Initialization
     
-    public init(_ key: StorageKey<Value>) where Value == Bool {
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == Bool, StorageValue.StorableValue == Value {
+        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    }
+    
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == Data, StorageValue.StorableValue == Value {
+        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    }
+    
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == Double, StorageValue.StorableValue == Value {
+        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    }
+    
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == Int, StorageValue.StorableValue == Value {
+        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    }
+    
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == String, StorageValue.StorableValue == Value {
+        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    }
+    
+    @inlinable
+    public init<StorageValue>(
+        _ key: StorageKey<StorageValue>
+    ) where Value == URL, StorageValue.StorableValue == Value {
         self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
     }
 }

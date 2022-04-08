@@ -225,3 +225,21 @@ extension Optional: Storable where Wrapped: Storable {
         }
     }
 }
+
+extension RawRepresentable where Self.RawValue: Storable {
+    // MARK: Public Static Interface
+    
+    public static func decode(from storage: @autoclosure () -> RawValue?) -> Self? {
+        guard let rawValue = storage(), let value = Self(rawValue: rawValue) else {
+            return nil
+        }
+        
+        return value
+    }
+
+    // MARK: Public Instance Interface
+    
+    public func encodeForStorage() -> RawValue {
+        rawValue
+    }
+}

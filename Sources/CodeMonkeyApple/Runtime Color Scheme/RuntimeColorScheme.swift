@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum RuntimeColorScheme: String, Codable, SynthesizedIdentifiable {
+public enum RuntimeColorScheme: String, Codable, Storable, SynthesizedIdentifiable {
     case dark = "dark"
     case light = "light"
     case system = "system"
@@ -42,26 +42,6 @@ public enum RuntimeColorScheme: String, Codable, SynthesizedIdentifiable {
         case .system:
             return "System"
         }
-    }
-}
-
-// MARK: - Storable Extension
-
-extension RuntimeColorScheme: Storable {
-    // MARK: Public Static Interface
-    
-    public static func decode(from storage: @autoclosure () -> String?) -> RuntimeColorScheme? {
-        guard let rawValue = storage() else {
-            return nil
-        }
-        
-        return RuntimeColorScheme(rawValue: rawValue)
-    }
-    
-    // MARK: Public Instance Interface
-    
-    public func encodeForStorage() -> String {
-        rawValue
     }
 }
 
