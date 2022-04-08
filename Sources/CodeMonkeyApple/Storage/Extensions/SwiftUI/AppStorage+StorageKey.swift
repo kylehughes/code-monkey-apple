@@ -11,44 +11,42 @@ extension AppStorage {
     // MARK: Public Initialization
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == Bool, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == Bool {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == Data, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == Data {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == Double, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == Double {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == Int, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == Int {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == String, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == String {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init<StorageValue>(
-        _ key: StorageKey<StorageValue>
-    ) where Value == URL, StorageValue.StorableValue == Value {
-        self.init(wrappedValue: key.defaultValue.encodeForStorage(), key.id)
+    public init(_ key: StorageKey<Value>) where Value == URL {
+        self.init(wrappedValue: key.defaultValue, key.id)
+    }
+    
+    @inlinable
+    public init(_ key: StorageKey<Value>) where Value: RawRepresentable, Value.RawValue == Int {
+        self.init(wrappedValue: key.defaultValue, key.id)
+    }
+    
+    @inlinable
+    public init(_ key: StorageKey<Value>) where Value: RawRepresentable, Value.RawValue == String {
+        self.init(wrappedValue: key.defaultValue, key.id)
     }
 }
