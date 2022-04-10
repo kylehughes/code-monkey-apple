@@ -33,156 +33,50 @@ public final class InMemoryStorage {
 extension InMemoryStorage: Storage {
     // MARK: Getting Values
     
-    public func get(_ key: StorageKey<Bool>) async -> Bool {
-        self[key.id] as? Bool ?? key.defaultValue
+    public func get<Value>(_ key: StorageKey<Value>) async -> Value {
+        self[key.id] as? Value ?? key.defaultValue
     }
     
-    public func get(_ key: StorageKey<Bool?>) async -> Bool? {
-        self[key.id] as? Bool? ?? key.defaultValue
-    }
+    // MARK: Getting Debug Values
     
-    public func get(_ key: StorageKey<Data>) async -> Data {
-        self[key.id] as? Data ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Data?>) async -> Data? {
-        self[key.id] as? Data? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Date>) async -> Date {
-        self[key.id] as? Date ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Date?>) async -> Date? {
-        self[key.id] as? Date? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Double>) async -> Double {
-        self[key.id] as? Double ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Double?>) async -> Double? {
-        self[key.id] as? Double? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Float>) async -> Float {
-        self[key.id] as? Float ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Float?>) async -> Float? {
-        self[key.id] as? Float? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Int>) async -> Int {
-        self[key.id] as? Int ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<Int?>) async -> Int? {
-        self[key.id] as? Int? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<String>) async -> String {
-        self[key.id] as? String ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<String?>) async -> String? {
-        self[key.id] as? String? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<[String]>) async -> [String] {
-        self[key.id] as? [String] ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<[String]?>) async -> [String]? {
-        self[key.id] as? [String]? ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<URL>) async -> URL {
-        self[key.id] as? URL ?? key.defaultValue
-    }
-    
-    public func get(_ key: StorageKey<URL?>) async -> URL? {
-        self[key.id] as? URL? ?? key.defaultValue
+    public func get<Value>(_ key: DebugStorageKey<Value>) async -> Value {
+        #if DEBUG
+        self[key.id] as? Value ?? key.defaultValue
+        #else
+        key.defaultValue
+        #endif
     }
     
     // MARK: Setting Values
 
-    public func set(_ key: StorageKey<Bool>, to value: Bool) async {
+    public func set<Value>(_ key: StorageKey<Value>, to value: Value) async {
         self[key.id] = value
     }
     
-    public func set(_ key: StorageKey<Bool?>, to value: Bool?) async {
-        self[key.id] = value
-    }
+    // MARK: Setting Debug Values
     
-    public func set(_ key: StorageKey<Data>, to value: Data) async {
+    public func set<Value>(_ key: DebugStorageKey<Value>, to value: Value) async {
+        #if DEBUG
         self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Data?>, to value: Data?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Date>, to value: Date) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Date?>, to value: Date?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Double>, to value: Double) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Double?>, to value: Double?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Float>, to value: Float) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Float?>, to value: Float?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Int>, to value: Int) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<Int?>, to value: Int?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<String>, to value: String) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<String?>, to value: String?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<[String]>, to value: [String]) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<[String]?>, to value: [String]?) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<URL>, to value: URL) async {
-        self[key.id] = value
-    }
-    
-    public func set(_ key: StorageKey<URL?>, to value: URL?) async {
-        self[key.id] = value
+        #else
+        // NO-OP
+        #endif
     }
     
     // MARK: Removing Values
     
     public func remove<Value>(_ key: StorageKey<Value>) async {
         storage.removeValue(forKey: key.id)
+    }
+    
+    // MARK: Removing Debug Values
+    
+    public func remove<Value>(_ key: DebugStorageKey<Value>) async where Value : Storable {
+        #if DEBUG
+        storage.removeValue(forKey: key.id)
+        #else
+        // NO-OP
+        #endif
     }
 }
 

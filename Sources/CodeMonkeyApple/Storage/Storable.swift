@@ -33,6 +33,18 @@ extension Storable {
     public static func decode(for key: StorageKey<Self>, from storage: @autoclosure () -> StorableValue?) -> Self {
         decode(from: storage()) ?? key.defaultValue
     }
+    
+    public static func decode(for key: DebugStorageKey<Self>, from storage: @autoclosure () -> Any?) -> Self {
+        guard let storableValue = storage() as? StorableValue else {
+            return key.defaultValue
+        }
+        
+        return decode(for: key, from: storableValue)
+    }
+    
+    public static func decode(for key: DebugStorageKey<Self>, from storage: @autoclosure () -> StorableValue?) -> Self {
+        decode(from: storage()) ?? key.defaultValue
+    }
 }
 
 // MARK: - Extension for Bool
