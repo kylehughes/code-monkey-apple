@@ -36,6 +36,32 @@ public struct UserDefaultsRegistrationBuilder {
         return copy
     }
     
+    public func adding<Value>(_ key: DebugStorageKey<Value>) -> UserDefaultsRegistrationBuilder {
+        #if DEBUG
+        var copy = self
+        
+        copy.registrations[key.id] = key.defaultValue.encodeForStorage()
+        
+        return copy
+        #else
+        self
+        #endif
+    }
+    
+    public func adding<Value>(_ key: DebugStorageKey<Value?>) -> UserDefaultsRegistrationBuilder {
+        #if DEBUG
+        var copy = self
+        
+        if let encodedValue = key.defaultValue.encodeForStorage() {
+            copy.registrations[key.id] = encodedValue
+        }
+        
+        return copy
+        #else
+        self
+        #endif
+    }
+    
     public func build() -> [String: Any] {
         registrations
     }
