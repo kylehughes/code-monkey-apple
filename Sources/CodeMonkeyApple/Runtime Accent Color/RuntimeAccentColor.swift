@@ -11,6 +11,7 @@ public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
     case blue
     case brown
     case cyan
+    case `default`
     case green
     case indigo
     case mint
@@ -31,6 +32,8 @@ public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
             return .brown
         case .cyan:
             return .cyan
+        case .default:
+            return .accentColor
         case .green:
             return .green
         case .indigo:
@@ -60,6 +63,8 @@ public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
             return "Brown"
         case .cyan:
             return "Cyan"
+        case .default:
+            return "Default"
         case .green:
             return "Green"
         case .indigo:
