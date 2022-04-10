@@ -8,45 +8,61 @@
 import SwiftUI
 
 extension AppStorage {
-    // MARK: Public Initialization
+    // MARK: Initialize With Storage Key
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == Bool {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == Bool {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == Data {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == Data {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == Double {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == Double {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == Int {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == Int {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == String {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == String {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value == URL {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value == URL {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value: RawRepresentable, Value.RawValue == Int {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value: RawRepresentable, Value.RawValue == Int {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
     
     @inlinable
-    public init(_ key: StorageKey<Value>) where Value: RawRepresentable, Value.RawValue == String {
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value == Value, Value: RawRepresentable, Value.RawValue == String {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
 }
