@@ -1,0 +1,93 @@
+//
+//  RuntimeAccentColor.swift
+//  CodeMonkeyApple
+//
+//  Created by Kyle Hughes on 4/10/22.
+//
+
+import SwiftUI
+
+public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
+    case blue
+    case brown
+    case cyan
+    case green
+    case indigo
+    case mint
+    case orange
+    case pink
+    case purple
+    case red
+    case teal
+    case yellow
+    
+    // MARK: Public Instance Interface
+    
+    public var platformValue: Color {
+        switch self {
+        case .blue:
+            return .blue
+        case .brown:
+            return .brown
+        case .cyan:
+            return .cyan
+        case .green:
+            return .green
+        case .indigo:
+            return .indigo
+        case .mint:
+            return .mint
+        case .orange:
+            return .orange
+        case .pink:
+            return .pink
+        case .purple:
+            return .purple
+        case .red:
+            return .red
+        case .teal:
+            return .teal
+        case .yellow:
+            return .yellow
+        }
+    }
+    
+    public var title: String {
+        switch self {
+        case .blue:
+            return "Blue"
+        case .brown:
+            return "Brown"
+        case .cyan:
+            return "Cyan"
+        case .green:
+            return "Green"
+        case .indigo:
+            return "Indigo"
+        case .mint:
+            return "Mint"
+        case .orange:
+            return "Orange"
+        case .pink:
+            return "Pink"
+        case .purple:
+            return "Purple"
+        case .red:
+            return "Red"
+        case .teal:
+            return "Teal"
+        case .yellow:
+            return "Yellow"
+        }
+    }
+}
+
+// MARK: - Extension for View
+
+extension View {
+    // MARK: Public Instance Interface
+    
+    public func accentColor(_ runtimeAccentColor: RuntimeAccentColor) -> some View {
+        accentColor(runtimeAccentColor.platformValue)
+    }
+}
