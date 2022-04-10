@@ -38,7 +38,7 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
         case .cyan:
             return .cyan
         case .default:
-            return .accentColor
+            return Color("AccentColor")
         case .green:
             return .green
         case .indigo:
