@@ -11,6 +11,6 @@ extension View {
     // MARK: Public Instance Interface
     
     public func defaultPreviewDevice() -> some View {
-        previewDevice("iPhone 12 mini")
+        previewDevice("iPhone 13")
     }
 }
