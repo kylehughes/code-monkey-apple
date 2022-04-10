@@ -17,6 +17,7 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
     case mint
     case orange
     case pink
+    case primary
     case purple
     case red
     case teal
@@ -48,6 +49,8 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
             return .orange
         case .pink:
             return .pink
+        case .primary:
+            return .primary
         case .purple:
             return .purple
         case .red:
@@ -79,6 +82,8 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
             return "Orange"
         case .pink:
             return "Pink"
+        case .primary:
+            return "Black / White"
         case .purple:
             return "Purple"
         case .red:
