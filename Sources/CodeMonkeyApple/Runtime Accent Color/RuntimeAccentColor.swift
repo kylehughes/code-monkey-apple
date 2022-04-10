@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
+public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdentifiable {
     case blue
     case brown
     case cyan
@@ -21,6 +21,10 @@ public enum RuntimeAccentColor: String, Storable, SynthesizedIdentifiable {
     case red
     case teal
     case yellow
+    
+    // MARK: Public Static Interface
+    
+    public static let allCasesInDisplayOrder: [RuntimeAccentColor] = allCases.sorted { $0.title < $1.title }
     
     // MARK: Public Instance Interface
     
