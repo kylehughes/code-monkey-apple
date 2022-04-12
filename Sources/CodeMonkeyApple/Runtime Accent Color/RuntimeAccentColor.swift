@@ -27,7 +27,30 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
     
     public static let allCasesInDisplayOrder: [RuntimeAccentColor] = allCases.sorted { $0.title < $1.title }
     
+    public static let defaultEquivalent: RuntimeAccentColor = {
+        for color in allCases {
+            guard
+                color != .default,
+                color.platformValue.rgbaEqualsRGBA(from: RuntimeAccentColor.default.platformValue)
+            else {
+                continue
+            }
+            
+            return color
+        }
+        
+        return .default
+    }()
+    
     // MARK: Public Instance Interface
+    
+    public var nonDefaultEquivalent: RuntimeAccentColor {
+        guard self == .default else {
+            return self
+        }
+        
+        return .defaultEquivalent
+    }
     
     public var platformValue: Color {
         switch self {
