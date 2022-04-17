@@ -10,13 +10,21 @@ public struct Subdomain: Equatable, Hashable, Codable, RawRepresentable {
     
     // MARK: Public Initialization
     
-    public init<StringType>(rawValue: StringType) where StringType: StringProtocol {
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+    
+    public init(rawValue: Substring) {
         self.rawValue = String(rawValue)
     }
     
     // MARK: Public Instance Interface
     
-    public func adding<StringType>(subdomain: StringType) -> DomainName where StringType: StringProtocol {
+    public func adding(subdomain: String) -> DomainName {
+        adding(subdomain: Subdomain(rawValue: subdomain))
+    }
+    
+    public func adding(subdomain: Substring) -> DomainName {
         adding(subdomain: Subdomain(rawValue: subdomain))
     }
     
@@ -25,7 +33,7 @@ public struct Subdomain: Equatable, Hashable, Codable, RawRepresentable {
     }
 }
 
-// MARK: - ExpressibleByStringLiteral Extension
+// MARK: - ExpressibleByExtendedGraphemeClusterLiteral Extension
 
 extension Subdomain: ExpressibleByExtendedGraphemeClusterLiteral {
     // MARK: Public Initialization
@@ -35,6 +43,7 @@ extension Subdomain: ExpressibleByExtendedGraphemeClusterLiteral {
     }
 }
 
+// MARK: - ExpressibleByStringLiteral Extension
 
 extension Subdomain: ExpressibleByStringLiteral {
     // MARK: Public Initialization
@@ -43,6 +52,8 @@ extension Subdomain: ExpressibleByStringLiteral {
         self.init(rawValue: value)
     }
 }
+
+// MARK: - ExpressibleByUnicodeScalarLiteral Extension
 
 extension Subdomain: ExpressibleByUnicodeScalarLiteral {
     // MARK: Public Initialization

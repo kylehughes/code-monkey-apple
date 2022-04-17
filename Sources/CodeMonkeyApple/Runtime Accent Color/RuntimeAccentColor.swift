@@ -28,6 +28,7 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
     public static let allCasesInDisplayOrder: [RuntimeAccentColor] = allCases.sorted { $0.title < $1.title }
     
     public static let defaultEquivalent: RuntimeAccentColor = {
+        #if canImport(UIKit)
         for color in allCases {
             guard
                 color != .default,
@@ -38,6 +39,7 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
             
             return color
         }
+        #endif
         
         return .default
     }()

@@ -16,10 +16,8 @@ public protocol DomainNameProtocol: Hashable, Codable, RawRepresentable {
     var subdomains: [Subdomain] { get }
     
     mutating func add<Other>(other: Other) where Other: DomainNameProtocol
-    mutating func add<StringType>(subdomain: StringType) where StringType: StringProtocol
     mutating func add(subdomain: Subdomain)
     func adding<Other>(other: Other) -> Self where Other: DomainNameProtocol
-    func adding<StringType>(subdomain: StringType) -> Self where StringType: StringProtocol
     func adding(subdomain: Subdomain) -> Self
 }
 
@@ -27,12 +25,20 @@ public protocol DomainNameProtocol: Hashable, Codable, RawRepresentable {
 
 extension DomainNameProtocol {
     // MARK: Public Instance Interface
-
-    public mutating func add<StringType>(subdomain: StringType) where StringType: StringProtocol {
+    
+    public mutating func add(subdomain: String) {
         add(subdomain: Subdomain(rawValue: subdomain))
     }
     
-    public func adding<StringType>(subdomain: StringType) -> Self where StringType: StringProtocol {
+    public mutating func add(subdomain: Substring) {
+        add(subdomain: String(subdomain))
+    }
+    
+    public func adding(subdomain: String) -> Self {
         adding(subdomain: Subdomain(rawValue: subdomain))
+    }
+    
+    public func adding(subdomain: Substring) -> Self {
+        adding(subdomain: String(subdomain))
     }
 }
