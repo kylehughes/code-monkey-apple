@@ -7,6 +7,6 @@
 
 import SwiftUI
 
-extension Color: Storable {
+extension Color: Storable, RawRepresentable {
     // NO-OP
 }
