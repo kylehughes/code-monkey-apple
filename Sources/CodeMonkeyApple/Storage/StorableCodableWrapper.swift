@@ -11,7 +11,7 @@ import Foundation
 /// `RawRepresentable` `String`s.
 @dynamicMemberLookup
 public struct StorableCodableWrapper<Value> where Value: Codable {
-    public let storedValue: Value
+    public var storedValue: Value
     
     // MARK: Public Initialization
     
