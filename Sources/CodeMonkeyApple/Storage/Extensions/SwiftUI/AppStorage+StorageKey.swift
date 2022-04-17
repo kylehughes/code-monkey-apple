@@ -65,4 +65,11 @@ extension AppStorage {
     ) where Key: StorageKeyProtocol, Key.Value == Value, Value: RawRepresentable, Value.RawValue == String {
         self.init(wrappedValue: key.defaultValue, key.id)
     }
+    
+    @inlinable
+    public init<Key>(
+        _ key: Key
+    ) where Key: StorageKeyProtocol, Key.Value: Codable, Value == StorableCodableWrapper<Key.Value> {
+        self.init(wrappedValue: StorableCodableWrapper(key.defaultValue), key.id)
+    }
 }
