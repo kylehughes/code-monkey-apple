@@ -7,7 +7,11 @@
 
 import Foundation
 
-extension RawRepresentable where Self: Codable, RawValue == String {
+public protocol CodableRawRepresentable: Codable, RawRepresentable where RawValue == String {
+    // NO-OP
+}
+
+extension CodableRawRepresentable {
     // MARK: Public Initialization
     
     public init?(rawValue: String) {
