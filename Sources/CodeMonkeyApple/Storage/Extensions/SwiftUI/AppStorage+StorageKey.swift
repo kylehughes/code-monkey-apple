@@ -68,7 +68,7 @@ extension AppStorage {
     
     @inlinable
     public init<Key>(
-        _ key: Key
+        wrapping key: Key
     ) where Key: StorageKeyProtocol, Key.Value: Codable, Value == StorableCodableWrapper<Key.Value> {
         self.init(wrappedValue: StorableCodableWrapper(key.defaultValue), key.id)
     }
