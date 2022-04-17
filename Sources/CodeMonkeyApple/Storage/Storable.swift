@@ -238,6 +238,8 @@ extension Optional: Storable where Wrapped: Storable {
     }
 }
 
+// MARK: - Extension for RawRepresentables of Supported Types
+
 extension RawRepresentable where Self.RawValue: Storable {
     // MARK: Public Static Interface
     

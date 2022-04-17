@@ -7,6 +7,6 @@
 
 import SwiftUI
 
-extension Color: Storable, CodableRawRepresentable {
+extension Color: StorableByCodable {
     // NO-OP
 }
