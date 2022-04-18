@@ -30,7 +30,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = false
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -43,7 +43,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = true
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -56,7 +56,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = UUID().uuidString.data(using: .utf8)!
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -69,7 +69,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = UUID().uuidString.data(using: .utf8)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -82,7 +82,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = Date(timeIntervalSince1970: .random(in: 0 ... 100_000))
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue.timeIntervalSince1970, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -95,7 +95,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = Date(timeIntervalSince1970: .random(in: 0 ... 100_000))
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue?.timeIntervalSince1970, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -108,7 +108,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -121,7 +121,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -134,7 +134,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -147,7 +147,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -160,7 +160,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -173,7 +173,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = .random(in: 0...100_000)
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -186,7 +186,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = "NEW"
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -199,7 +199,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = "NEW"
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -212,7 +212,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = ["NEW1", "NEW2"]
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -225,7 +225,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = ["NEW1", "NEW2"]
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -238,7 +238,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = URL(string: "https://superhighway.info")!
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         
@@ -251,7 +251,7 @@ extension UserDefaultsStorageTests {
         let expectedNewValue: Value = URL(string: "https://superhighway.info")!
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(expectedNewValue, forKey: key.id)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
         
         let newValue: Value = storage.get(key)
         

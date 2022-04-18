@@ -5,13 +5,6 @@
 //  Created by Kyle Hughes on 3/28/22.
 //
 
-public protocol StorageKeyProtocol: Identifiable {
-    associatedtype Value: Storable
-    
-    var defaultValue: Value { get }
-    var id: String { get }
-}
-
 public struct StorageKey<Value>: Identifiable, StorageKeyProtocol where Value: Storable {
     public let defaultValue: Value
     public let id: String
