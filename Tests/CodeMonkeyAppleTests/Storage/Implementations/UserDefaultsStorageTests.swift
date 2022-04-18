@@ -259,6 +259,38 @@ extension UserDefaultsStorageTests {
     }
 }
 
+// MARK: - Complex Getting Value Tests
+
+extension UserDefaultsStorageTests {
+    // MARK: RawRepresentable Tests
+    
+    func test_get_rawRepresentable() {
+        typealias Value = TestRawRepresentableStorable
+        let defaultValue: Value = .caseOne
+        let expectedNewValue: Value = .caseTwo
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
+        
+        let newValue: Value = storage.get(key)
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_get_rawRepresentable_optional() {
+        typealias Value = TestRawRepresentableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .caseTwo
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
+        
+        let newValue: Value = storage.get(key)
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+}
+
 // MARK: - Setting Value Tests
 
 extension UserDefaultsStorageTests {
