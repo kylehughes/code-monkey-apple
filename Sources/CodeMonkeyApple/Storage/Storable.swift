@@ -421,3 +421,66 @@ extension Storable where Self: RawRepresentable, RawValue: Storable, StorableVal
         rawValue.store(value, as: userDefaultsKey, in: userDefaults)
     }
 }
+
+// MARK: - Extension for Codable Types
+
+extension Storable where Self: Codable, StorableValue == String {
+    // MARK: Converting to and From Storable Value
+    
+    @inlinable
+    public static func decode(from storage: @autoclosure () -> String?) -> Self? {
+        guard
+            let jsonString = storage(),
+            let json = jsonString.data(using: .utf8),
+            let value = try? JSONDecoder.default.decode(Self.self, from: json)
+        else {
+            return nil
+        }
+        
+        return value
+    }
+    
+    @inlinable
+    public func encodeForStorage() -> String {
+        String(data: try! JSONEncoder.default.encode(self), encoding: .utf8)!
+    }
+
+    // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> String? {
+        .extract(userDefaultsKey, from: userDefaults)
+    }
+}
+
+// MARK: - Extension for Raw Representable & Codable Types (Conflict-Avoidance)
+
+extension Storable where Self: Codable & RawRepresentable, RawValue == String, StorableValue == String {
+    // MARK: Converting to and From Storable Value
+    
+    @inlinable
+    public static func decode(from storage: @autoclosure () -> RawValue.StorableValue?) -> Self? {
+        guard let rawValue = RawValue.decode(from: storage()), let value = Self(rawValue: rawValue) else {
+            return nil
+        }
+        
+        return value
+    }
+    
+    @inlinable
+    public func encodeForStorage() -> RawValue.StorableValue {
+        rawValue.encodeForStorage()
+    }
+
+    // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
+        RawValue.extract(userDefaultsKey, from: userDefaults)
+    }
+    
+    @inlinable
+    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
+    }
+}

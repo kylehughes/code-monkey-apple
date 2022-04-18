@@ -289,6 +289,34 @@ extension UserDefaultsStorageTests {
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
+    
+    // MARK: Codable Tests
+    
+    func test_get_codable() {
+        typealias Value = TestCodableStorable
+        let defaultValue: Value = .random
+        let expectedNewValue: Value = .random
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
+        
+        let newValue: Value = storage.get(key)
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_get_codable_optional() {
+        typealias Value = TestCodableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .random
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(expectedNewValue.encodeForStorage(), forKey: key.id)
+        
+        let newValue: Value = storage.get(key)
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
 }
 
 // MARK: - Setting Value Tests
@@ -304,12 +332,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_bool_optional_defaultNil() async {
+    func test_set_bool_optional_default() async {
         typealias Value = Bool?
         let defaultValue: Value = nil
         let expectedNewValue: Value = false
@@ -317,12 +345,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_bool_optional_defaultTrue() async {
+    func test_set_bool_optional_set() async {
         typealias Value = Bool?
         let defaultValue: Value = true
         let expectedNewValue: Value = nil
@@ -330,9 +358,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: Data Tests
@@ -345,12 +371,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_data_optional_defaultNil() async {
+    func test_set_data_optional_default() async {
         typealias Value = Data?
         let defaultValue: Value = nil
         let expectedNewValue: Value = UUID().uuidString.data(using: .utf8)!
@@ -358,12 +384,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_data_optional_defaultTrue() async {
+    func test_set_data_optional_set() async {
         typealias Value = Data?
         let defaultValue: Value = UUID().uuidString.data(using: .utf8)!
         let expectedNewValue: Value = nil
@@ -371,9 +397,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: Date Tests
@@ -386,12 +410,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = Date(timeIntervalSince1970: storage.object(forKey: key.id) as? TimeInterval ?? -1)
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_date_optional_defaultNil() async {
+    func test_set_date_optional_default() async {
         typealias Value = Date?
         let defaultValue: Value = nil
         let expectedNewValue: Value = Date(timeIntervalSince1970: .random(in: 0 ... 100_000))
@@ -399,12 +423,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = Date(timeIntervalSince1970: storage.object(forKey: key.id) as? TimeInterval ?? -1)
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_date_optional_defaultTrue() async {
+    func test_set_date_optional_set() async {
         typealias Value = Date?
         let defaultValue: Value = Date(timeIntervalSince1970: .random(in: 0 ... 100_000))
         let expectedNewValue: Value = nil
@@ -412,9 +436,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: Double Tests
@@ -427,12 +449,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_double_optional_defaultNil() async {
+    func test_set_double_optional_default() async {
         typealias Value = Double?
         let defaultValue: Value = nil
         let expectedNewValue: Value = .random(in: 0...100_000)
@@ -440,12 +462,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_double_optional_defaultTrue() async {
+    func test_set_double_optional_set() async {
         typealias Value = Double?
         let defaultValue: Value = .random(in: 0...100_000)
         let expectedNewValue: Value = nil
@@ -453,9 +475,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: Float Tests
@@ -468,12 +488,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_float_optional_defaultNil() async {
+    func test_set_float_optional_default() async {
         typealias Value = Float?
         let defaultValue: Value = nil
         let expectedNewValue: Value = .random(in: 0...100_000)
@@ -481,12 +501,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_float_optional_defaultTrue() async {
+    func test_set_float_optional_set() async {
         typealias Value = Float?
         let defaultValue: Value = .random(in: 0...100_000)
         let expectedNewValue: Value = nil
@@ -494,9 +514,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: Integer Tests
@@ -509,12 +527,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_int_optional_defaultNil() async {
+    func test_set_int_optional_default() async {
         typealias Value = Int?
         let defaultValue: Value = nil
         let expectedNewValue: Value = .random(in: 0...100_000)
@@ -522,12 +540,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_int_optional_defaultTrue() async {
+    func test_set_int_optional_set() async {
         typealias Value = Int?
         let defaultValue: Value = .random(in: 0...100_000)
         let expectedNewValue: Value = nil
@@ -535,9 +553,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: String Tests
@@ -550,12 +566,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_string_optional_defaultNil() async {
+    func test_set_string_optional_default() async {
         typealias Value = String?
         let defaultValue: Value = nil
         let expectedNewValue: Value = UUID().uuidString
@@ -563,12 +579,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_string_optional_defaultTrue() async {
+    func test_set_string_optional_set() async {
         typealias Value = String?
         let defaultValue: Value = UUID().uuidString
         let expectedNewValue: Value = nil
@@ -576,9 +592,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: String Array Tests
@@ -591,12 +605,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_stringArray_optional_defaultNil() async {
+    func test_set_stringArray_optional_default() async {
         typealias Value = [String]?
         let defaultValue: Value = nil
         let expectedNewValue: Value = [UUID().uuidString, UUID().uuidString]
@@ -604,12 +618,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_stringArray_optional_defaultTrue() async {
+    func test_set_stringArray_optional_set() async {
         typealias Value = [String]?
         let defaultValue: Value = [UUID().uuidString, UUID().uuidString]
         let expectedNewValue: Value = nil
@@ -617,9 +631,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.object(forKey: key.id) as? Value
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertNil(storage.object(forKey: key.id))
     }
     
     // MARK: URL Tests
@@ -632,12 +644,12 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.url(forKey: key.id)
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
     
-    func test_set_url_optional_defaultNil() async {
+    func test_set_url_optional_default() async {
         typealias Value = URL?
         let defaultValue: Value = nil
         let expectedNewValue: Value = URL(string: "https://superhighway.info")!
@@ -645,7 +657,7 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.url(forKey: key.id)
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
     }
@@ -658,8 +670,88 @@ extension UserDefaultsStorageTests {
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
         storage.set(key, to: expectedNewValue)
         
-        let newValue = storage.url(forKey: key.id)
+        XCTAssertNil(storage.object(forKey: key.id))
+    }
+}
+
+// MARK: - Complex Setting Value Tests
+
+extension UserDefaultsStorageTests {
+    // MARK: RawRepresentable Tests
+    
+    func test_set_rawRepresentables() async {
+        typealias Value = TestRawRepresentableStorable
+        let defaultValue: Value = .caseOne
+        let expectedNewValue: Value = .caseTwo
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
         
         XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_set_rawRepresentables_optional_default() async {
+        typealias Value = TestRawRepresentableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .caseTwo
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_set_rawRepresentables_optional_set() async throws {
+        typealias Value = TestRawRepresentableStorable?
+        let defaultValue: Value = .caseOne
+        let expectedNewValue: Value = nil
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        XCTAssertNil(storage.object(forKey: key.id))
+    }
+    
+    // MARK: Codable Tests
+    
+    func test_set_codable() async {
+        typealias Value = TestCodableStorable
+        let defaultValue: Value = .random
+        let expectedNewValue: Value = .random
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_set_codable_optional_default() async {
+        typealias Value = TestCodableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .random
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        let newValue = Value.decode(for: key, from: Value.extract(key, from: storage))
+        
+        XCTAssertEqual(newValue, expectedNewValue)
+    }
+    
+    func test_set_codable_optional_set() async throws {
+        typealias Value = TestCodableStorable?
+        let defaultValue: Value = .random
+        let expectedNewValue: Value = nil
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedNewValue)
+        
+        XCTAssertNil(storage.object(forKey: key.id))
     }
 }

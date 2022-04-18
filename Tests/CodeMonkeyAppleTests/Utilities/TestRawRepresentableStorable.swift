@@ -7,7 +7,7 @@
 
 @testable import CodeMonkeyApple
 
-enum TestRawRepresentableStorable: String, Storable {
+enum TestRawRepresentableStorable: String, Equatable, Storable {
     case caseOne
     case caseTwo = "CASE_TWO"
 }
