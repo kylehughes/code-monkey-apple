@@ -392,12 +392,12 @@ extension Optional: Storable where Wrapped: Storable {
 
 // MARK: - Extension for RawRepresentables of Supported Types
 
-extension RawRepresentable where Self.RawValue: Storable {
+extension Storable where Self: RawRepresentable, RawValue: Storable, StorableValue == RawValue.StorableValue {
     // MARK: Converting to and From Storable Value
     
     @inlinable
-    public static func decode(from storage: @autoclosure () -> RawValue?) -> Self? {
-        guard let rawValue = storage(), let value = Self(rawValue: rawValue) else {
+    public static func decode(from storage: @autoclosure () -> RawValue.StorableValue?) -> Self? {
+        guard let rawValue = RawValue.decode(from: storage()), let value = Self(rawValue: rawValue) else {
             return nil
         }
         
@@ -405,11 +405,19 @@ extension RawRepresentable where Self.RawValue: Storable {
     }
     
     @inlinable
-    public func encodeForStorage() -> RawValue {
-        rawValue
+    public func encodeForStorage() -> RawValue.StorableValue {
+        rawValue.encodeForStorage()
     }
 
     // MARK: Interfacing With User Defaults
 
-    // TODO: defer to storable i think
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
+        RawValue.extract(userDefaultsKey, from: userDefaults)
+    }
+    
+    @inlinable
+    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
+    }
 }
