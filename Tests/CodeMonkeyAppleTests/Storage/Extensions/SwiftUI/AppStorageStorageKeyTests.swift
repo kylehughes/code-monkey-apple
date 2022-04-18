@@ -254,3 +254,87 @@ extension AppStorageStorageKeyTests {
         XCTAssertEqual(propertyWrapper.wrappedValue, expectedNewValue)
     }
 }
+
+// MARK: - Complex Type Tests
+
+extension AppStorageStorageKeyTests {
+    // MARK: Codable Tests
+    
+    func test_codable() {
+        typealias Value = TestCodableStorable
+        let defaultValue: Value = .random
+        let expectedNewValue: Value = .random
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        let propertyWrapper = AppStorage(wrapping: key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, defaultValue)
+        propertyWrapper.wrappedValue.storedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, expectedNewValue)
+    }
+    
+    func test_codable_optional_existingValue() {
+        typealias Value = TestCodableStorable?
+        let defaultValue: Value = .random
+        let expectedNewValue: Value = nil
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        storage.set(key, to: defaultValue)
+        
+        let propertyWrapper = AppStorage(wrapping: key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, defaultValue)
+        propertyWrapper.wrappedValue.storedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, expectedNewValue)
+    }
+    
+    func test_codable_optional_noValue() {
+        typealias Value = TestCodableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .random
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        let propertyWrapper = AppStorage(wrapping: key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, defaultValue)
+        propertyWrapper.wrappedValue.storedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue.storedValue, expectedNewValue)
+    }
+    
+    // MARK: RawRepresentable Tests
+    
+    func test_rawRepresentable() {
+        typealias Value = TestRawRepresentableStorable
+        let defaultValue: Value = .caseOne
+        let expectedNewValue: Value = .caseTwo
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        let propertyWrapper = AppStorage(key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue, defaultValue)
+        propertyWrapper.wrappedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue, expectedNewValue)
+    }
+    
+    func test_rawRepresentable_optional_existingValue() {
+        typealias Value = TestRawRepresentableStorable?
+        let defaultValue: Value = .caseOne
+        let expectedNewValue: Value = nil
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        storage.set(key, to: defaultValue)
+        
+        let propertyWrapper = AppStorage(key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue, defaultValue)
+        propertyWrapper.wrappedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue, expectedNewValue)
+    }
+    
+    func test_rawRepresentable_optional_noValue() {
+        typealias Value = TestRawRepresentableStorable?
+        let defaultValue: Value = nil
+        let expectedNewValue: Value = .caseTwo
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        
+        let propertyWrapper = AppStorage(key, storage: storage)
+        XCTAssertEqual(propertyWrapper.wrappedValue, defaultValue)
+        propertyWrapper.wrappedValue = expectedNewValue
+        XCTAssertEqual(propertyWrapper.wrappedValue, expectedNewValue)
+    }
+}
