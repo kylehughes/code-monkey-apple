@@ -155,12 +155,12 @@ extension Date: Storable {
     
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.double(forKey: userDefaultsKey)
+        TimeInterval.extract(userDefaultsKey, from: userDefaults)
     }
 
     @inlinable
     public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        userDefaults.set(value, forKey: userDefaultsKey)
+        value.store(value, as: userDefaultsKey, in: userDefaults)
     }
 }
 
