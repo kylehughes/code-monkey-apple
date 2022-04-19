@@ -89,13 +89,15 @@ extension Bool: Storable {
     // MARK: Interfacing With User Defaults
     
     @inlinable
-    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        userDefaults.set(value, forKey: userDefaultsKey)
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a `false` value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.bool(forKey: userDefaultsKey)
+    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        userDefaults.set(value, forKey: userDefaultsKey)
     }
 }
 
@@ -185,7 +187,9 @@ extension Double: Storable {
     
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.double(forKey: userDefaultsKey)
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a 0 value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
 
     @inlinable
@@ -217,7 +221,9 @@ extension Float: Storable {
     
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.float(forKey: userDefaultsKey)
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a 0 value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
@@ -249,7 +255,9 @@ extension Int: Storable {
 
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.integer(forKey: userDefaultsKey)
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a 0 value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
