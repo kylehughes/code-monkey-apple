@@ -492,3 +492,36 @@ extension Storable where Self: Codable & RawRepresentable, RawValue == String, S
         rawValue.store(value, as: userDefaultsKey, in: userDefaults)
     }
 }
+
+// MARK: - Extension for Codable & Versionable Types
+
+extension Storable where Self: Codable & Versionable, StorableValue == String, Wrapper: CodableVersionableWrapper {
+    // MARK: Converting to and From Storable Value
+    
+    @inlinable
+    public static func decode(from storage: @autoclosure () -> StorableValue?) -> Self? {
+        guard
+            let jsonString = storage(),
+            let json = jsonString.data(using: .utf8),
+            let envelope = try? JSONDecoder.default.decode(CodableVersionableEnvelope<Self>.self, from: json)
+        else {
+            return nil
+        }
+        
+        return envelope.model
+    }
+    
+    @inlinable
+    public func encodeForStorage() -> StorableValue {
+        let envelope = CodableVersionableEnvelope(self)
+        
+        return String(data: try! JSONEncoder.default.encode(envelope), encoding: .utf8)!
+    }
+
+    // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        .extract(userDefaultsKey, from: userDefaults)
+    }
+}
