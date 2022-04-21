@@ -10,6 +10,7 @@ import SwiftUI
 public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdentifiable {
     case blue
     case brown
+    case coral
     case cyan
     case `default`
     case green
@@ -60,6 +61,8 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
             return .blue
         case .brown:
             return .brown
+        case .coral:
+            return Color(.displayP3, red: 255, green: 130, blue: 119, opacity: 1.0)
         case .cyan:
             return .cyan
         case .default:
@@ -93,6 +96,8 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
             return "Blue"
         case .brown:
             return "Brown"
+        case .coral:
+            return "Coral"
         case .cyan:
             return "Cyan"
         case .default:
