@@ -62,7 +62,7 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
         case .brown:
             return .brown
         case .coral:
-            return Color(.displayP3, red: 255, green: 130, blue: 119, opacity: 1.0)
+            return Color(.displayP3, red: 255/255, green: 130/255, blue: 119/255, opacity: 1.0)
         case .cyan:
             return .cyan
         case .default:
