@@ -26,44 +26,64 @@ struct StorableTestHarness<Target> where Target: Equatable & Storable {
     // MARK: Getting Value Tests
     
     func test() {
-        test_nonoptional()
-        test_optional_first()
-        test_optional_second()
+        test_default_nonoptional()
+        test_default_optional()
+        test_set_nonoptional()
+        test_set_optional_from()
+        test_set_optional_to()
     }
     
-    func test_nonoptional() {
+    func test_default_nonoptional() {
         typealias Value = Target
         let defaultValue: Value = firstValue
-        let expectedNewValue: Value = secondValue
+        let expectedValue: Value = defaultValue
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(key, to: expectedNewValue)
         
-        let newValue: Value = storage.get(key)
-        
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertEqual(storage.get(key), expectedValue)
     }
     
-    func test_optional_first() {
+    func test_default_optional() {
         typealias Value = Target?
         let defaultValue: Value = nil
-        let expectedNewValue: Value = secondValue
+        let expectedValue: Value = defaultValue
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(key, to: expectedNewValue)
+        
+        XCTAssertEqual(storage.get(key), expectedValue)
+    }
+    
+    func test_set_nonoptional() {
+        typealias Value = Target
+        let defaultValue: Value = firstValue
+        let expectedValue: Value = secondValue
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedValue)
+
+        XCTAssertEqual(storage.get(key), expectedValue)
+    }
+    
+    func test_set_optional_from() {
+        typealias Value = Target?
+        let defaultValue: Value = nil
+        let expectedValue: Value = secondValue
+        
+        let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
+        storage.set(key, to: expectedValue)
         
         let newValue: Value = storage.get(key)
         
-        XCTAssertEqual(newValue, expectedNewValue)
+        XCTAssertEqual(newValue, expectedValue)
     }
     
-    func test_optional_second() {
+    func test_set_optional_to() {
         typealias Value = Target?
         let defaultValue: Value = firstValue
-        let expectedNewValue: Value = nil
+        let expectedValue: Value = nil
         
         let key = StorageKey<Value>(id: UUID().uuidString, defaultValue: defaultValue)
-        storage.set(key, to: expectedNewValue)
+        storage.set(key, to: expectedValue)
         
         XCTAssertNil(storage.object(forKey: key.id))
     }
