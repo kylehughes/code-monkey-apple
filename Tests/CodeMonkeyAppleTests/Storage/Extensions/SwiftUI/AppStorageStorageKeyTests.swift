@@ -260,6 +260,9 @@ extension AppStorageStorageKeyTests {
 extension AppStorageStorageKeyTests {
     // MARK: Codable Tests
     
+    // big issue where this property wrapper and storage can't always work together because this assumed a wrapper. gets messy
+    // when setting an optional value. Want own property wrapper :O
+    
     func test_codable() {
         typealias Value = TestCodableStorable
         let defaultValue: Value = .random
