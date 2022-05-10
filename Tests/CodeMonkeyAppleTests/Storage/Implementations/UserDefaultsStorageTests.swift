@@ -97,7 +97,7 @@ extension UserDefaultsStorageTests {
 // MARK: - Tests for Complex Types
 
 extension UserDefaultsStorageTests {
-    // MARK: Tests
+    // MARK: Functional Tests
     
     func test_codable() {
         StorableTestHarness<TestCodableStorable>(
@@ -145,5 +145,61 @@ extension UserDefaultsStorageTests {
         storage.set(v1Key, to: modelV1)
         
         XCTAssertEqual(storage.get(v3Key), expectedModelV3)
+    }
+    
+    // MARK: Performance Metrics
+    
+    func test_perf_codable_get() {
+        let model = ModelV3.random
+    
+        let modelKey = StorageKey<ModelV3?>(id: UUID().uuidString, defaultValue: nil)
+        
+        storage.set(modelKey, to: model)
+        
+        measure(metrics: [XCTClockMetric()]) {
+            _ = storage.get(modelKey)
+        }
+    }
+    
+    func test_perf_codable_set() {
+        let model = ModelV3.random
+        
+        let modelKey = StorageKey<ModelV3?>(id: UUID().uuidString, defaultValue: nil)
+        
+        measure(metrics: [XCTClockMetric()]) {
+            storage.set(modelKey, to: model)
+        }
+    }
+    
+    func test_perf_multipleKeys_get() {
+        let model = ModelV3.random
+        
+        let emailAddressKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        let fullNameKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        let idKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        
+        storage.set(emailAddressKey, to: model.emailAddress)
+        storage.set(fullNameKey, to: model.fullName)
+        storage.set(idKey, to: model.id)
+        
+        measure(metrics: [XCTClockMetric()]) {
+            _ = storage.get(emailAddressKey)
+            _ = storage.get(fullNameKey)
+            _ = storage.get(idKey)
+        }
+    }
+    
+    func test_perf_multipleKeys_set() {
+        let model = ModelV3.random
+        
+        let emailAddressKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        let fullNameKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        let idKey = StorageKey<String?>(id: UUID().uuidString, defaultValue: nil)
+        
+        measure(metrics: [XCTClockMetric()]) {
+            storage.set(emailAddressKey, to: model.emailAddress)
+            storage.set(fullNameKey, to: model.fullName)
+            storage.set(idKey, to: model.id)
+        }
     }
 }
