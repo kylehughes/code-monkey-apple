@@ -93,35 +93,35 @@ public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdent
     public var title: String {
         switch self {
         case .blue:
-            return "Blue"
+            return .blueColor
         case .brown:
-            return "Brown"
+            return .brownColor
         case .coral:
-            return "Coral"
+            return .coralColor
         case .cyan:
-            return "Cyan"
+            return .cyanColor
         case .default:
-            return "Default"
+            return .default
         case .green:
-            return "Green"
+            return .greenColor
         case .indigo:
-            return "Indigo"
+            return .indigoColor
         case .mint:
-            return "Mint"
+            return .mintColor
         case .orange:
-            return "Orange"
+            return .orangeColor
         case .pink:
-            return "Pink"
+            return .pinkColor
         case .primary:
-            return "Black / White"
+            return .blackWhiteColor
         case .purple:
-            return "Purple"
+            return .purpleColor
         case .red:
-            return "Red"
+            return .redColor
         case .teal:
-            return "Teal"
+            return .tealColor
         case .yellow:
-            return "Yellow"
+            return .yellowColor
         }
     }
 }

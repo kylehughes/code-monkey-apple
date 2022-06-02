@@ -36,11 +36,11 @@ public enum RuntimeColorScheme: String, Codable, Storable, SynthesizedIdentifiab
     public var title: String {
         switch self {
         case .dark:
-            return "Dark"
+            return .darkColorScheme
         case .light:
-            return "Light"
+            return .lightColorScheme
         case .system:
-            return "System"
+            return .systemColorScheme
         }
     }
 }
