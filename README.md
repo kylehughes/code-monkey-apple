@@ -10,6 +10,10 @@ I do not recommend taking a dependency on this package. It has an audience of on
 
 ### Manual
 
+Resources:
+
+- [Apple: Maintaining Your Own String Files](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/MaintaingYourOwnStringsFiles/MaintaingYourOwnStringsFiles.html)
+
 #### Generate Strings File
 
 For the development language:
