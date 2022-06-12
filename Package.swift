@@ -39,7 +39,7 @@ let package = Package(
                 .product(
                     name: "Introspect",
                     package: "SwiftUI-Introspect",
-                    condition: .when(platforms: [.iOS, .macOS])
+                    condition: .when(platforms: [.iOS, .macOS, .macCatalyst])
                 ),
             ]
         ),
