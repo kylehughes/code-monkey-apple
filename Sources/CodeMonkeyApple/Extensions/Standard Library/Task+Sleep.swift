@@ -11,27 +11,27 @@ import Foundation
 extension Task where Success == Never, Failure == Never {
     // MARK: Public Static Interface
     
-    public static func sleep(milliseconds: Double) async {
-        await sleep(UInt64(milliseconds * 1_000_000))
+    public static func sleep(milliseconds: Double) async throws {
+        try await sleep(nanoseconds: UInt64(milliseconds * 1_000_000))
     }
     
-    public static func sleep(seconds: TimeInterval) async {
-        await sleep(milliseconds: seconds * 1_000)
+    public static func sleep(seconds: TimeInterval) async throws {
+        try await sleep(milliseconds: seconds * 1_000)
     }
     
-    public static func sleepUnlessCancelled(_ duration: UInt64) async {
+    public static func sleepUnlessCancelled(nanoseconds: UInt64) async throws {
         guard not(Task.isCancelled) else {
             return
         }
         
-        await Task.sleep(duration)
+        try await sleep(nanoseconds: nanoseconds)
     }
     
-    public static func sleepUnlessCancelled(milliseconds: TimeInterval) async {
-        await Task.sleepUnlessCancelled(UInt64(milliseconds) * 1_000_000)
+    public static func sleepUnlessCancelled(milliseconds: TimeInterval) async throws {
+        try await sleepUnlessCancelled(nanoseconds: UInt64(milliseconds) * 1_000_000)
     }
 
-    public static func sleepUnlessCancelled(seconds: TimeInterval) async {
-        await Task.sleepUnlessCancelled(milliseconds: seconds * 1_000)
+    public static func sleepUnlessCancelled(seconds: TimeInterval) async throws {
+        try await sleepUnlessCancelled(milliseconds: seconds * 1_000)
     }
 }
