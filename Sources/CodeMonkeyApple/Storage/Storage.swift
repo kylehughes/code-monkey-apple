@@ -10,18 +10,18 @@ import Foundation
 public protocol Storage {
     // MARK: Getting Values
     
-    func get<Value>(_ key: StorageKey<Value>) async -> Value
-    func get<Value>(_ key: DebugStorageKey<Value>) async -> Value
+    func get<Value>(_ key: StorageKey<Value>) -> Value
+    func get<Value>(_ key: DebugStorageKey<Value>) -> Value
     
     // MARK: Setting Values
     
-    func set<Value>(_ key: StorageKey<Value>, to value: Value) async
-    func set<Value>(_ key: DebugStorageKey<Value>, to value: Value) async
+    func set<Value>(_ key: StorageKey<Value>, to value: Value)
+    func set<Value>(_ key: DebugStorageKey<Value>, to value: Value)
     
     // MARK: Removing Values
     
-    func remove<Value>(_ key: StorageKey<Value>) async
-    func remove<Value>(_ key: DebugStorageKey<Value>) async
+    func remove<Value>(_ key: StorageKey<Value>)
+    func remove<Value>(_ key: DebugStorageKey<Value>)
 }
 
 #if DEBUG

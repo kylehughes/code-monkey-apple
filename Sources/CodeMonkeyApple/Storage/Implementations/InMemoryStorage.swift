@@ -33,13 +33,13 @@ public final class InMemoryStorage {
 extension InMemoryStorage: Storage {
     // MARK: Getting Values
     
-    public func get<Value>(_ key: StorageKey<Value>) async -> Value {
+    public func get<Value>(_ key: StorageKey<Value>) -> Value {
         self[key.id] as? Value ?? key.defaultValue
     }
     
     // MARK: Getting Debug Values
     
-    public func get<Value>(_ key: DebugStorageKey<Value>) async -> Value {
+    public func get<Value>(_ key: DebugStorageKey<Value>) -> Value {
         #if DEBUG
         self[key.id] as? Value ?? key.defaultValue
         #else
@@ -49,13 +49,13 @@ extension InMemoryStorage: Storage {
     
     // MARK: Setting Values
 
-    public func set<Value>(_ key: StorageKey<Value>, to value: Value) async {
+    public func set<Value>(_ key: StorageKey<Value>, to value: Value) {
         self[key.id] = value
     }
     
     // MARK: Setting Debug Values
     
-    public func set<Value>(_ key: DebugStorageKey<Value>, to value: Value) async {
+    public func set<Value>(_ key: DebugStorageKey<Value>, to value: Value) {
         #if DEBUG
         self[key.id] = value
         #else
@@ -65,13 +65,13 @@ extension InMemoryStorage: Storage {
     
     // MARK: Removing Values
     
-    public func remove<Value>(_ key: StorageKey<Value>) async {
+    public func remove<Value>(_ key: StorageKey<Value>) {
         storage.removeValue(forKey: key.id)
     }
     
     // MARK: Removing Debug Values
     
-    public func remove<Value>(_ key: DebugStorageKey<Value>) async where Value : Storable {
+    public func remove<Value>(_ key: DebugStorageKey<Value>) where Value : Storable {
         #if DEBUG
         storage.removeValue(forKey: key.id)
         #else
