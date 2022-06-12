@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 4/17/22.
 //
 
+import Foundation
+
 public protocol StorageKeyProtocol: Identifiable {
     // MARK: Associated Types
     
@@ -14,4 +16,11 @@ public protocol StorageKeyProtocol: Identifiable {
     
     var defaultValue: Value { get }
     var id: String { get }
+    
+    func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value
+    func get(from userDefaults: UserDefaults) -> Value
+    func remove(from ubiquitousStore: NSUbiquitousKeyValueStore)
+    func remove(from userDefaults: UserDefaults)
+    func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore)
+    func set(to newValue: Value, in userDefaults: UserDefaults)
 }

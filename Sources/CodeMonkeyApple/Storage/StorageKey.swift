@@ -4,8 +4,11 @@
 //
 //  Created by Kyle Hughes on 3/28/22.
 //
+#warning("TODO: then make a new key, a composite key")
 
-public struct StorageKey<Value>: Identifiable, StorageKeyProtocol where Value: Storable {
+import Foundation
+
+public struct StorageKey<Value>: Identifiable where Value: Storable {
     public let defaultValue: Value
     public let id: String
     
@@ -33,4 +36,34 @@ extension StorageKey: Equatable where Value: Equatable {
 
 extension StorageKey: Hashable where Value: Hashable {
     // NO-OP
+}
+
+// MARK: - StorageKeyProtocol Extension
+
+extension StorageKey: StorageKeyProtocol {
+    // MARK: Public Instance Interface
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
+    }
+    
+    public func get(from userDefaults: UserDefaults) -> Value {
+        .decode(for: self, from: Value.extract(self, from: userDefaults))
+    }
+    
+    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        ubiquitousStore.removeObject(forKey: id)
+    }
+    
+    public func remove(from userDefaults: UserDefaults) {
+        userDefaults.removeObject(forKey: id)
+    }
+    
+    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
+        newValue.store(newValue.encodeForStorage(), as: id, in: ubiquitousStore)
+    }
+    
+    public func set(to newValue: Value, in userDefaults: UserDefaults) {
+        newValue.store(newValue.encodeForStorage(), as: id, in: userDefaults)
+    }
 }

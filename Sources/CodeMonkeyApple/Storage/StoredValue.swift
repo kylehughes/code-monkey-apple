@@ -95,4 +95,58 @@ extension StoredValue.KeyStorage: StorageKeyProtocol {
             return key.id
         }
     }
+    
+    func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        switch self {
+        case let .debug(key):
+            return key.get(from: ubiquitousStore)
+        case let .release(key):
+            return key.get(from: ubiquitousStore)
+        }
+    }
+    
+    func get(from userDefaults: UserDefaults) -> Value {
+        switch self {
+        case let .debug(key):
+            return key.get(from: userDefaults)
+        case let .release(key):
+            return key.get(from: userDefaults)
+        }
+    }
+    
+    func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        switch self {
+        case let .debug(key):
+            return key.remove(from: ubiquitousStore)
+        case let .release(key):
+            return key.remove(from: ubiquitousStore)
+        }
+    }
+    
+    func remove(from userDefaults: UserDefaults) {
+        switch self {
+        case let .debug(key):
+            return key.remove(from: userDefaults)
+        case let .release(key):
+            return key.remove(from: userDefaults)
+        }
+    }
+    
+    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
+        switch self {
+        case let .debug(key):
+            return key.set(to: newValue, in: ubiquitousStore)
+        case let .release(key):
+            return key.set(to: newValue, in: ubiquitousStore)
+        }
+    }
+    
+    public func set(to newValue: Value, in userDefaults: UserDefaults) {
+        switch self {
+        case let .debug(key):
+            return key.set(to: newValue, in: userDefaults)
+        case let .release(key):
+            return key.set(to: newValue, in: userDefaults)
+        }
+    }
 }

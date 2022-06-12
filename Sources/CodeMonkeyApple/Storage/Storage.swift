@@ -10,18 +10,15 @@ import Foundation
 public protocol Storage {
     // MARK: Getting Values
     
-    func get<Value>(_ key: StorageKey<Value>) -> Value
-    func get<Value>(_ key: DebugStorageKey<Value>) -> Value
+    func get<Key>(_ key: Key) -> Key.Value where Key: StorageKeyProtocol
     
     // MARK: Setting Values
     
-    func set<Value>(_ key: StorageKey<Value>, to value: Value)
-    func set<Value>(_ key: DebugStorageKey<Value>, to value: Value)
+    func set<Key>(_ key: Key, to value: Key.Value) where Key: StorageKeyProtocol
     
     // MARK: Removing Values
     
-    func remove<Value>(_ key: StorageKey<Value>)
-    func remove<Value>(_ key: DebugStorageKey<Value>)
+    func remove<Key>(_ key: Key) where Key: StorageKeyProtocol
 }
 
 #if DEBUG

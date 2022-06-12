@@ -33,50 +33,20 @@ public final class InMemoryStorage {
 extension InMemoryStorage: Storage {
     // MARK: Getting Values
     
-    public func get<Value>(_ key: StorageKey<Value>) -> Value {
-        self[key.id] as? Value ?? key.defaultValue
-    }
-    
-    // MARK: Getting Debug Values
-    
-    public func get<Value>(_ key: DebugStorageKey<Value>) -> Value {
-        #if DEBUG
-        self[key.id] as? Value ?? key.defaultValue
-        #else
-        key.defaultValue
-        #endif
+    public func get<Key>(_ key: Key) -> Key.Value where Key: StorageKeyProtocol {
+        self[key.id] as? Key.Value ?? key.defaultValue
     }
     
     // MARK: Setting Values
-
-    public func set<Value>(_ key: StorageKey<Value>, to value: Value) {
-        self[key.id] = value
-    }
     
-    // MARK: Setting Debug Values
-    
-    public func set<Value>(_ key: DebugStorageKey<Value>, to value: Value) {
-        #if DEBUG
+    public func set<Key>(_ key: Key, to value: Key.Value) where Key: StorageKeyProtocol {
         self[key.id] = value
-        #else
-        // NO-OP
-        #endif
     }
     
     // MARK: Removing Values
     
-    public func remove<Value>(_ key: StorageKey<Value>) {
+    public func remove<Key>(_ key: Key) where Key: StorageKeyProtocol {
         storage.removeValue(forKey: key.id)
-    }
-    
-    // MARK: Removing Debug Values
-    
-    public func remove<Value>(_ key: DebugStorageKey<Value>) where Value : Storable {
-        #if DEBUG
-        storage.removeValue(forKey: key.id)
-        #else
-        // NO-OP
-        #endif
     }
 }
 
