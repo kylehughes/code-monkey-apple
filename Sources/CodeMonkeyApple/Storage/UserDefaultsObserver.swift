@@ -7,21 +7,15 @@
 
 import Foundation
 
-final class UserDefaultsStorageKeyObserver<Key>: NSObject, ObservableObject where Key: StorageKeyProtocol {
-    private let key: Key
-    private let storage: UserDefaults
-    
+final class UserDefaultsStorageKeyObserver<Key>: StorageKeyObserver<UserDefaults, Key> where Key: StorageKeyProtocol {
     private var context: Int
     
     // MARK: Internal Initialization
     
     init(key: Key, storage: UserDefaults) {
-        self.key = key
-        self.storage = storage
-        
         context = 0
         
-        super.init()
+        super.init(storage: storage, key: key)
         
         storage.addObserver(self, forKeyPath: key.id, context: &context)
     }
