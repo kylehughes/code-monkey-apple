@@ -34,6 +34,10 @@ final class UserDefaultsStorageKeyObserver<Key>: StorageKeyObserver<UserDefaults
         change: [NSKeyValueChangeKey : Any]?,
         context: UnsafeMutableRawPointer?
     ) {
-        objectWillChange.send()
+        Task {
+            await MainActor.run {
+                objectWillChange.send()
+            }
+        }
     }
 }

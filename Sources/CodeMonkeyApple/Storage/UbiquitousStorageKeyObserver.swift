@@ -29,13 +29,17 @@ where
     // MARK: NSObject Implementation
     
     @objc private func didChangeExternally(_ notification: Notification) {
-        guard
-            let changedKeyIDs = notification.userInfo?[userInfoKey] as? [String],
-            changedKeyIDs.contains(key.id)
-        else {
-            return
+        Task {
+            await MainActor.run {
+                guard
+                    let changedKeyIDs = notification.userInfo?[userInfoKey] as? [String],
+                    changedKeyIDs.contains(key.id)
+                else {
+                    return
+                }
+                
+                objectWillChange.send()
+            }
         }
-        
-        objectWillChange.send()
     }
 }
