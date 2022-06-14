@@ -15,14 +15,11 @@ where
     ComposedKey: StorageKeyProtocol,
     Value.Components == ComposedKey.Value
 {
-    public let id: String
-    
     @StorageKeyBuilder private let compose: () -> ComposedKey
     
     // MARK: Public Initialization
     
-    public init(id: String, @StorageKeyBuilder compose: @escaping () -> ComposedKey) {
-        self.id = id
+    public init(@StorageKeyBuilder compose: @escaping () -> ComposedKey) {
         self.compose = compose
     }
 }
