@@ -12,26 +12,6 @@ public enum Conditional<TrueValue, FalseValue> {
     case `true`(TrueValue)
 }
 
-// MARK: - Identifiable Extension
-
-extension Conditional: Identifiable
-where
-    TrueValue: Identifiable,
-    FalseValue: Identifiable,
-    TrueValue.ID == FalseValue.ID
-{
-    // MARK: Public Instance Interface
-    
-    public var id: TrueValue.ID {
-        switch self {
-        case let .false(value):
-            return value.id
-        case let .true(value):
-            return value.id
-        }
-    }
-}
-
 // MARK: - Storable Extension
 
 extension Conditional: Storable where TrueValue: Storable, FalseValue: Storable {
@@ -76,18 +56,29 @@ extension Conditional: Storable where TrueValue: Storable, FalseValue: Storable 
 
 // MARK: - StorageKeyProtocol Extension
 
-extension Conditional: StorageKeyProtocol
+extension Conditional: Identifiable, StorageKeyProtocol
 where
     TrueValue: StorageKeyProtocol,
-    FalseValue: StorageKeyProtocol,
-    TrueValue.ID == String,
-    FalseValue.ID == String
+    FalseValue: StorageKeyProtocol
 {
     // MARK: Public Typealiases
     
     public typealias Value = Conditional<TrueValue.Value, FalseValue.Value>
     
     // MARK: Public Instance Interface
+    
+    public var compositeIDs: Set<String> {
+        [
+            {
+                switch self {
+                case let .false(value):
+                    return value.id
+                case let .true(value):
+                    return value.id
+                }
+            }()
+        ]
+    }
     
     public var defaultValue: Value {
         switch self {

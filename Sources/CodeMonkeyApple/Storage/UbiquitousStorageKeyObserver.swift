@@ -31,10 +31,13 @@ where
     @objc private func didChangeExternally(_ notification: Notification) {
         Task {
             await MainActor.run {
-                guard
-                    let changedKeyIDs = notification.userInfo?[userInfoKey] as? [String],
-                    changedKeyIDs.contains(key.id)
-                else {
+                guard let changedKeyIDs = notification.userInfo?[userInfoKey] as? [String] else {
+                    return
+                }
+                
+                let changedKeyIDsSet = Set(changedKeyIDs)
+                
+                guard not(changedKeyIDsSet.union(key.compositeIDs).isEmpty) else {
                     return
                 }
                 

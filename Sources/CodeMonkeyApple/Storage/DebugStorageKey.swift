@@ -24,6 +24,10 @@ public struct DebugStorageKey<Value>: Identifiable, StorageKeyProtocol where Val
 extension DebugStorageKey {
     // MARK: Public Instance Interface
     
+    public var compositeIDs: Set<String> {
+        [id]
+    }
+    
     public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
         #if DEBUG
         .decode(for: self, from: Value.extract(self, from: ubiquitousStore))

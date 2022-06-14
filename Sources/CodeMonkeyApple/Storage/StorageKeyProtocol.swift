@@ -7,13 +7,14 @@
 
 import Foundation
 
-public protocol StorageKeyProtocol: Identifiable {
+public protocol StorageKeyProtocol: Identifiable where ID == String {
     // MARK: Associated Types
     
     associatedtype Value: Storable
     
     // MARK: Instance Interface
     
+    var compositeIDs: Set<String> { get }
     var defaultValue: Value { get }
     var id: String { get }
     
@@ -23,4 +24,15 @@ public protocol StorageKeyProtocol: Identifiable {
     func remove(from userDefaults: UserDefaults)
     func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore)
     func set(to newValue: Value, in userDefaults: UserDefaults)
+}
+
+// MARK: - Default Implementation
+
+extension StorageKeyProtocol {
+    // MARK: Public Instance Interface
+    
+    public var id: String {
+        compositeIDs
+            .joined(separator: ",")
+    }
 }

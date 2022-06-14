@@ -17,13 +17,17 @@ final class UserDefaultsStorageKeyObserver<Key>: StorageKeyObserver<UserDefaults
         
         super.init(storage: storage, key: key)
         
-        storage.addObserver(self, forKeyPath: key.id, context: &context)
+        for keyID in key.compositeIDs {
+            storage.addObserver(self, forKeyPath: keyID, context: &context)
+        }
     }
     
     // MARK: Deinitialization
     
     deinit {
-        storage.removeObserver(self, forKeyPath: key.id, context: &context)
+        for keyID in key.compositeIDs {
+            storage.removeObserver(self, forKeyPath: keyID, context: &context)
+        }
     }
     
     // MARK: NSObject Implementation

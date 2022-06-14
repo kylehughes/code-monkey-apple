@@ -42,6 +42,10 @@ extension StorageKey: Hashable where Value: Hashable {
 extension StorageKey: StorageKeyProtocol {
     // MARK: Public Instance Interface
     
+    public var compositeIDs: Set<String> {
+        [id]
+    }
+    
     public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
         .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
     }

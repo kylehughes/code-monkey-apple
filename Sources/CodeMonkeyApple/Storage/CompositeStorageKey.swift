@@ -32,6 +32,10 @@ where
 extension CompositeStorageKey: StorageKeyProtocol {
     // MARK: Public Instance Interface
     
+    public var compositeIDs: Set<String> {
+        compose().compositeIDs
+    }
+    
     public var defaultValue: Value {
         Value.compose(from: compose().defaultValue)
     }

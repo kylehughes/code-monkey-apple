@@ -102,19 +102,18 @@ where
     
     // MARK: Public Instance Interface
     
+    public var compositeIDs: Set<String> {
+        [
+            e1.id,
+            e2.id,
+        ]
+    }
+    
     public var defaultValue: Value {
         Value(
             e1.defaultValue,
             e2.defaultValue
         )
-    }
-    
-    public var id: String {
-        [
-            e1.id,
-            e2.id,
-        ]
-        .joined(separator: ",")
     }
 
     public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
