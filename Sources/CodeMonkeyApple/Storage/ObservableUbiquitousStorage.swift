@@ -9,7 +9,7 @@ import Foundation
 
 private let userInfoKey = AnyHashable(NSUbiquitousKeyValueStoreChangedKeysKey)
 
-final class UbiquitousStorageKeyObserver<Key>: StorageKeyObserver<NSUbiquitousKeyValueStore, Key>
+final class ObservableUbiquitousStorage<Key>: ObservableStorage<NSUbiquitousKeyValueStore, Key>
 where
     Key: StorageKeyProtocol
 {

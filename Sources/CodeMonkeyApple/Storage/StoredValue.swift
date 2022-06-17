@@ -15,26 +15,24 @@ where
     Storage: CodeMonkeyApple.Storage,
     Key: StorageKeyProtocol
 {
-    @StateObject private var observer: StorageKeyObserver<Storage, Key>
-    
     private let key: Key
-    private let storage: Storage
+    
+    @StateObject private var storage: ObservableStorage<Storage, Key>
     
     // MARK: Public Initialization
     
     public init(_ key: Key, storage: Storage = .default) where Storage == NSUbiquitousKeyValueStore {
-        self.init(key, storage: storage, observer: UbiquitousStorageKeyObserver(storage: storage, key: key))
+        self.init(key, storage: ObservableUbiquitousStorage(storage: storage, key: key))
     }
     
     public init(_ key: Key, storage: Storage = .standard) where Storage == UserDefaults {
-        self.init(key, storage: storage, observer: UserDefaultsStorageKeyObserver(key: key, storage: storage))
+        self.init(key, storage: ObservableUserDefaultsStorage(key: key, storage: storage))
     }
     
-    public init(_ key: Key, storage: Storage, observer: StorageKeyObserver<Storage, Key>) {
+    public init(_ key: Key, storage: ObservableStorage<Storage, Key>) {
         self.key = key
-        self.storage = storage
         
-        _observer = StateObject(wrappedValue: observer)
+        _storage = StateObject(wrappedValue: storage)
     }
     
     // MARK: Property Wrapper Implementation
@@ -49,10 +47,10 @@ where
     
     public var wrappedValue: Key.Value {
         get {
-            storage.get(key)
+            storage.value
         }
         nonmutating set {
-            storage.set(key, to: newValue)
+            storage.value = newValue
         }
     }
 }

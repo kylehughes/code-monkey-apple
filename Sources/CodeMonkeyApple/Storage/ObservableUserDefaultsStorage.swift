@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class UserDefaultsStorageKeyObserver<Key>: StorageKeyObserver<UserDefaults, Key> where Key: StorageKeyProtocol {
+final class ObservableUserDefaultsStorage<Key>: ObservableStorage<UserDefaults, Key> where Key: StorageKeyProtocol {
     private var context: Int
     
     // MARK: Internal Initialization
