@@ -7,15 +7,18 @@
 
 import Foundation
 
-final class ObservableUserDefaultsStorage<Key>: ObservableStorage<UserDefaults, Key> where Key: StorageKeyProtocol {
+final class ObservableUserDefaultsStorage<Key>: ObservableStorage<Key> where Key: StorageKeyProtocol {
+    private let userDefaults: UserDefaults
+    
     private var context: Int
     
     // MARK: Internal Initialization
     
-    init(key: Key, storage: UserDefaults) {
+    init(storage: UserDefaults, key: Key) {
         context = 0
+        userDefaults = storage
         
-        super.init(storage: storage, key: key)
+        super.init(key: key)
         
         for keyID in key.compositeIDs {
             storage.addObserver(self, forKeyPath: keyID, context: &context)
@@ -26,7 +29,7 @@ final class ObservableUserDefaultsStorage<Key>: ObservableStorage<UserDefaults, 
     
     deinit {
         for keyID in key.compositeIDs {
-            storage.removeObserver(self, forKeyPath: keyID, context: &context)
+            userDefaults.removeObserver(self, forKeyPath: keyID, context: &context)
         }
     }
     

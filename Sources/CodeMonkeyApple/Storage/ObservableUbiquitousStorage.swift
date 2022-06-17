@@ -9,14 +9,18 @@ import Foundation
 
 private let userInfoKey = AnyHashable(NSUbiquitousKeyValueStoreChangedKeysKey)
 
-final class ObservableUbiquitousStorage<Key>: ObservableStorage<NSUbiquitousKeyValueStore, Key>
+final class ObservableUbiquitousStorage<Key>: ObservableStorage<Key>
 where
     Key: StorageKeyProtocol
 {
+    private let ubiquitousStore: NSUbiquitousKeyValueStore
+    
     // MARK: Internal Initialization
     
-    override init(storage: NSUbiquitousKeyValueStore, key: Key) {
-        super.init(storage: storage, key: key)
+    init(storage: NSUbiquitousKeyValueStore, key: Key) {
+        ubiquitousStore = storage
+        
+        super.init(key: key)
         
         NotificationCenter.default.addObserver(
             self,

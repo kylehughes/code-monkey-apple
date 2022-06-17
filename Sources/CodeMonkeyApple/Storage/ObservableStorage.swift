@@ -7,22 +7,20 @@
 
 import Foundation
 
-public class ObservableStorage<Storage, Key>: NSObject, ObservableObject
-where
-    Storage: CodeMonkeyApple.Storage,
-    Key: StorageKeyProtocol
-{
+public class ObservableStorage<Key>: NSObject, ObservableObject where Key: StorageKeyProtocol {
     public let key: Key
-    public let storage: Storage
     
     // MARK: Public Initialization
     
-    public init(storage: Storage, key: Key) {
-        self.storage = storage
+    public init(key: Key) {
         self.key = key
     }
     
-    // MARK: Internal Instance Interface
+    // MARK: Public Instance Interface
+    
+    public var storage: any Storage {
+        fatalError("Should be implemented by subclass.")
+    }
     
     public var value: Key.Value {
         get {

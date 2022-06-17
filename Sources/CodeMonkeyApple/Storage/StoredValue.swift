@@ -10,26 +10,22 @@ import Foundation
 import SwiftUI
 
 @propertyWrapper
-public struct StoredValue<Storage, Key>: DynamicProperty
-where
-    Storage: CodeMonkeyApple.Storage,
-    Key: StorageKeyProtocol
-{
+public struct StoredValue<Key>: DynamicProperty where Key: StorageKeyProtocol {
     private let key: Key
     
-    @StateObject private var storage: ObservableStorage<Storage, Key>
+    @StateObject private var storage: ObservableStorage<Key>
     
     // MARK: Public Initialization
     
-    public init(_ key: Key, storage: Storage = .default) where Storage == NSUbiquitousKeyValueStore {
+    public init(_ key: Key, storage: NSUbiquitousKeyValueStore = .default) {
         self.init(key, storage: ObservableUbiquitousStorage(storage: storage, key: key))
     }
     
-    public init(_ key: Key, storage: Storage = .standard) where Storage == UserDefaults {
-        self.init(key, storage: ObservableUserDefaultsStorage(key: key, storage: storage))
+    public init(_ key: Key, storage: UserDefaults = .standard) {
+        self.init(key, storage: ObservableUserDefaultsStorage(storage: storage, key: key))
     }
     
-    public init(_ key: Key, storage: ObservableStorage<Storage, Key>) {
+    public init(_ key: Key, storage: ObservableStorage<Key>) {
         self.key = key
         
         _storage = StateObject(wrappedValue: storage)
