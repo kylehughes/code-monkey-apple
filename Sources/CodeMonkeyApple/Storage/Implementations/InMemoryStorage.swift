@@ -68,13 +68,3 @@ extension InMemoryStorage: Storage {
         fatalError("I should implement this.")
     }
 }
-
-#if DEBUG
-// MARK: - Previews
-
-extension InMemoryStorage {
-    // MARK: Public Static Interface
-    
-    public static let preview = InMemoryStorage()
-}
-#endif

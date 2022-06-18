@@ -39,11 +39,11 @@ public protocol Storage {
 #if DEBUG
 // MARK: - Preview
 
-extension Storage {
+extension Storage where Self == InMemoryStorage {
     // MARK: Public Static Interface
     
-    public static var preview: Storage {
-        InMemoryStorage.preview
+    public static var preview: Self {
+        InMemoryStorage()
     }
 }
 #endif
