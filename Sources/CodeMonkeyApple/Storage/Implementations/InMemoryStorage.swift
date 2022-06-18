@@ -48,6 +48,25 @@ extension InMemoryStorage: Storage {
     public func remove<Key>(_ key: Key) where Key: StorageKeyProtocol {
         storage.removeValue(forKey: key.id)
     }
+    
+    // MARK: Observing Keys
+    
+    public func deregister<Key>(
+        observer target: NSObject,
+        for key: Key,
+        with context: UnsafeMutableRawPointer?
+    ) where Key: StorageKeyProtocol {
+        fatalError("I should implement this.")
+    }
+    
+    public func register<Key>(
+        observer target: NSObject,
+        for key: Key,
+        with context: UnsafeMutableRawPointer?,
+        valueWillChange: () -> Void
+    ) where Key: StorageKeyProtocol {
+        fatalError("I should implement this.")
+    }
 }
 
 #if DEBUG

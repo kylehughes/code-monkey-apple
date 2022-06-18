@@ -19,6 +19,21 @@ public protocol Storage {
     // MARK: Removing Values
     
     func remove<Key>(_ key: Key) where Key: StorageKeyProtocol
+    
+    // MARK: Observing Keys
+    
+    func deregister<Key>(
+        observer target: NSObject,
+        for key: Key,
+        with context: UnsafeMutableRawPointer?
+    ) where Key: StorageKeyProtocol
+    
+    func register<Key>(
+        observer target: NSObject,
+        for key: Key,
+        with context: UnsafeMutableRawPointer?,
+        valueWillChange: @escaping () -> Void
+    ) where Key: StorageKeyProtocol
 }
 
 #if DEBUG

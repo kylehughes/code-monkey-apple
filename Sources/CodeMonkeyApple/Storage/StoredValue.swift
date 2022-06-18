@@ -13,22 +13,14 @@ import SwiftUI
 public struct StoredValue<Key>: DynamicProperty where Key: StorageKeyProtocol {
     private let key: Key
     
-    @StateObject private var storage: ObservableStorage<Key>
+    @StateObject private var observer: StorageKeyObserver<Key>
     
     // MARK: Public Initialization
     
-    public init(_ key: Key, storage: NSUbiquitousKeyValueStore = .default) {
-        self.init(key, storage: ObservableUbiquitousStorage(storage: storage, key: key))
-    }
-    
-    public init(_ key: Key, storage: UserDefaults = .standard) {
-        self.init(key, storage: ObservableUserDefaultsStorage(storage: storage, key: key))
-    }
-    
-    public init(_ key: Key, storage: ObservableStorage<Key>) {
+    public init(_ key: Key, storage: Storage) {
         self.key = key
         
-        _storage = StateObject(wrappedValue: storage)
+        _observer = StateObject(wrappedValue: StorageKeyObserver(storage: storage, key: key))
     }
     
     // MARK: Property Wrapper Implementation
@@ -43,10 +35,10 @@ public struct StoredValue<Key>: DynamicProperty where Key: StorageKeyProtocol {
     
     public var wrappedValue: Key.Value {
         get {
-            storage.value
+            observer.value
         }
         nonmutating set {
-            storage.value = newValue
+            observer.value = newValue
         }
     }
 }
