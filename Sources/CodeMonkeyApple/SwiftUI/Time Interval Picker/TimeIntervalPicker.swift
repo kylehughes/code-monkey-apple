@@ -22,7 +22,7 @@ public struct TimeIntervalPicker {
 extension TimeIntervalPicker: UIViewRepresentable {
     // MARK: Public Typealiases
     
-    public typealias UIViewType = UIDatePickerScreen-Scale-Dependent Value
+    public typealias UIViewType = UIDatePicker
     
     // MARK: Creating and Updating the View
     
