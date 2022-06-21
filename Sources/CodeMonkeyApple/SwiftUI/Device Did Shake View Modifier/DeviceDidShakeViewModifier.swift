@@ -39,3 +39,18 @@ extension View {
 extension UIDevice {
     public static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
 }
+
+// MARK: - Extension for UIWindow
+
+extension UIWindow {
+    // MARK: Internal Instance Interface
+    
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        guard motion == .motionShake else {
+            return
+        }
+        
+        NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
+    }
+}
+
