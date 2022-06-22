@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 3/24/21.
 //
 
+#if canImport(HealthKit)
+
 import HealthKit
 
 public enum HealthKitError {
@@ -43,3 +45,5 @@ extension HealthKitError {
         case unknownFrameworkError(HKError)
     }
 }
+
+#endif

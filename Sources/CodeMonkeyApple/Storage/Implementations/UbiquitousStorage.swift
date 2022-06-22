@@ -8,6 +8,10 @@
 import Foundation
 
 extension NSUbiquitousKeyValueStore: Storage {
+    public static let didChangeInternallyNotification = NSNotification.Name(
+        "NSUbiquitousKeyValueStore.DidChangeInternally"
+    )
+    
     // MARK: Getting Values
     
     @inlinable
@@ -20,6 +24,8 @@ extension NSUbiquitousKeyValueStore: Storage {
     @inlinable
     public func set<Key>(_ key: Key, to value: Key.Value) where Key : StorageKeyProtocol {
         key.set(to: value, in: self)
+        
+        postInternalChangeNotification(for: key)
     }
     
     // MARK: Removing Values
@@ -27,6 +33,8 @@ extension NSUbiquitousKeyValueStore: Storage {
     @inlinable
     public func remove<Key>(_ key: Key) where Key: StorageKeyProtocol {
         key.remove(from: self)
+        
+        postInternalChangeNotification(for: key)
     }
     
     // MARK: Observing Keys
@@ -37,11 +45,8 @@ extension NSUbiquitousKeyValueStore: Storage {
         for key: Key,
         with context: UnsafeMutableRawPointer?
     ) where Key: StorageKeyProtocol {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
-            object: self
-        )
+        NotificationCenter.default.removeObserver(self, name: Self.didChangeExternallyNotification, object: self)
+        NotificationCenter.default.removeObserver(self, name: Self.didChangeInternallyNotification, object: self)
     }
     
     @inlinable
@@ -52,23 +57,53 @@ extension NSUbiquitousKeyValueStore: Storage {
         valueWillChange: @escaping () -> Void
     ) where Key: StorageKeyProtocol {
         NotificationCenter.default.addObserver(
-            forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            forName: Self.didChangeExternallyNotification,
             object: self,
             queue: nil
-        ) { notification in
-            let userInfoKey = AnyHashable(NSUbiquitousKeyValueStoreChangedKeysKey)
-            
-            guard let changedKeyIDs = notification.userInfo?[userInfoKey] as? [String] else {
-                return
-            }
-            
-            let changedKeyIDsSet = Set(changedKeyIDs)
-            
-            guard not(changedKeyIDsSet.union(key.compositeIDs).isEmpty) else {
-                return
-            }
-            
-            valueWillChange()
+        ) {
+            self.didObserveChange(for: key, via: $0, valueWillChange: valueWillChange)
         }
+        
+        NotificationCenter.default.addObserver(
+            forName: Self.didChangeInternallyNotification,
+            object: self,
+            queue: nil
+        ) {
+            self.didObserveChange(for: key, via: $0, valueWillChange: valueWillChange)
+        }
+    }
+    
+    // MARK: Internal Instance Interface
+    
+    internal static let changedKeysKey = AnyHashable(NSUbiquitousKeyValueStoreChangedKeysKey)
+    
+    @usableFromInline
+    internal func didObserveChange<Key>(
+        for key: Key,
+        via notification: Notification,
+        valueWillChange: @escaping () -> Void
+    ) where Key: StorageKeyProtocol {
+        guard let changedKeyIDs = notification.userInfo?[Self.changedKeysKey] as? [String] else {
+            return
+        }
+        
+        let changedKeyIDsSet = Set(changedKeyIDs)
+        
+        guard not(changedKeyIDsSet.union(key.compositeIDs).isEmpty) else {
+            return
+        }
+        
+        valueWillChange()
+    }
+    
+    @usableFromInline
+    internal func postInternalChangeNotification<Key>(for key: Key) where Key: StorageKeyProtocol {
+        NotificationCenter.default.post(
+            name: Self.didChangeInternallyNotification,
+            object: self,
+            userInfo: [
+                Self.changedKeysKey: Array(key.compositeIDs)
+            ]
+        )
     }
 }

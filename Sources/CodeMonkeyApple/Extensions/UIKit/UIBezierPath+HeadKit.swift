@@ -7,6 +7,7 @@
 //  Derived from https://github.com/MeltedNYC/ContinuousCorners
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -213,3 +214,4 @@ extension UIBezierPath {
         return (minimumTopLeft, minimumTopRight, minimumBottomLeft, minimumBottomRight)
     }
 }
+#endif

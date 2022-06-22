@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 4/12/22.
 //
 
+#if canImport(UIKit)
+
 import UIKit
 
 extension UIScreen {
@@ -14,3 +16,5 @@ extension UIScreen {
         bounds == CGRect(x: 0, y: 0, width: 320, height: 568)
     }
 }
+
+#endif

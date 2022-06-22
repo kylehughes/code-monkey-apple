@@ -5,6 +5,7 @@
 //  Created by Kyle Hughes on 3/21/21.
 //
 
+#if canImport(HealthKit)
 import Combine
 import HealthKit
 
@@ -89,4 +90,6 @@ extension HKHealthStore {
 extension HKHealthStore {
     public static let preview = HKHealthStore()
 }
+#endif
+
 #endif
