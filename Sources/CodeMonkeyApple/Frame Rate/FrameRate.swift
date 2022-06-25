@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 5/22/22.
 //
 
+#if canImport(UIKit)
+
 import SwiftUI
 
 /// - SeeAlso: https://developer.apple.com/documentation/quartzcore/optimizing_promotion_refresh_rates_for_iphone_13_pro_and_ipad_pro
@@ -66,3 +68,5 @@ private final class DisplayLinkHolder {
         // NO-OP
     }
 }
+
+#endif

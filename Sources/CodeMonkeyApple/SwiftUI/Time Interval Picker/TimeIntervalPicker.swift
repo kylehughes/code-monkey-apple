@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 4/18/22.
 //
 
+#if canImport(UIKit)
+
 import SwiftUI
 
 public struct TimeIntervalPicker {
@@ -73,3 +75,5 @@ extension TimeIntervalPicker {
         }
     }
 }
+
+#endif

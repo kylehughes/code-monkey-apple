@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 8/22/21.
 //
 
+#if canImport(UIKit)
+
 import SwiftUI
 
 extension View {
@@ -26,3 +28,5 @@ extension View {
         }
     }
 }
+
+#endif
