@@ -15,19 +15,19 @@ extension HapticFeedback {
     // MARK: Public Instance Interface
     
     @inlinable
-    public static func setIsDisabled(
-        basedOn isDisabledKey: StorageKey<Bool>,
-        userDefaults: UserDefaults = .standard
-    ) {
-        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, userDefaults: userDefaults)
+    public static func setIsDisabled<Key>(
+        basedOn isDisabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
+        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, storage: storage)
     }
     
     @inlinable
-    public static func setIsEnabled(
-        basedOn isEnabledKey: StorageKey<Bool>,
-        userDefaults: UserDefaults = .standard
-    ) {
-        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isEnabledKey, userDefaults: userDefaults)
+    public static func setIsEnabled<Key>(
+        basedOn isEnabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
+        HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isEnabledKey, storage: storage)
     }
 }
 
@@ -36,33 +36,45 @@ extension HapticFeedback {
 extension HapticFeedbackGenerator {
     // MARK: Public Initialization
     
-    public convenience init(isDisabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public convenience init<Key>(
+        isDisabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
         self.init(
             isDisabledProvider: {
-                userDefaults.get(isDisabledKey)
+                storage.get(isDisabledKey)
             }
         )
     }
     
-    public convenience init(isEnabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public convenience init<Key>(
+        isEnabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
         self.init(
             isEnabledProvider: {
-                userDefaults.get(isEnabledKey)
+                storage.get(isEnabledKey)
             }
         )
     }
     
     // MARK: Public Instance Interface
     
-    public func setIsDisabled(basedOn isDisabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public func setIsDisabled<Key>(
+        basedOn isDisabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
         setIsDisabled {
-            userDefaults.get(isDisabledKey)
+            storage.get(isDisabledKey)
         }
     }
     
-    public func setIsEnabled(basedOn isEnabledKey: StorageKey<Bool>, userDefaults: UserDefaults = .standard) {
+    public func setIsEnabled<Key>(
+        basedOn isEnabledKey: Key,
+        storage: Storage
+    ) where Key: StorageKeyProtocol, Key.Value == Bool {
         setIsEnabled {
-            userDefaults.get(isEnabledKey)
+            storage.get(isEnabledKey)
         }
     }
 }
