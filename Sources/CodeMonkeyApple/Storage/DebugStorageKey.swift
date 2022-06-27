@@ -32,7 +32,7 @@ extension DebugStorageKey {
         #if DEBUG
         .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
         #else
-        key.defaultValue
+        defaultValue
         #endif
     }
     
@@ -40,7 +40,7 @@ extension DebugStorageKey {
         #if DEBUG
         .decode(for: self, from: Value.extract(self, from: userDefaults))
         #else
-        key.defaultValue
+        defaultValue
         #endif
     }
     
