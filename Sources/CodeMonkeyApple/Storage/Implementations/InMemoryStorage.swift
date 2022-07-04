@@ -33,6 +33,10 @@ public final class InMemoryStorage {
 extension InMemoryStorage: Storage {
     // MARK: Getting Values
     
+    public var dictionaryRepresentation: [String : Any] {
+        storage
+    }
+    
     public func get<Key>(_ key: Key) -> Key.Value where Key: StorageKeyProtocol {
         self[key.id] as? Key.Value ?? key.defaultValue
     }

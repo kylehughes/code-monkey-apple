@@ -10,6 +10,10 @@ import Foundation
 extension UserDefaults: Storage {
     // MARK: Getting Values
     
+    public var dictionaryRepresentation: [String : Any] {
+        dictionaryRepresentation()
+    }
+    
     @inlinable
     public func get<Key>(_ key: Key) -> Key.Value where Key: StorageKeyProtocol {
         key.get(from: self)

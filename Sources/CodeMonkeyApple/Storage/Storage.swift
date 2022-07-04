@@ -10,6 +10,8 @@ import Foundation
 public protocol Storage {
     // MARK: Getting Values
     
+    var dictionaryRepresentation: [String: Any] { get }
+    
     func get<Key>(_ key: Key) -> Key.Value where Key: StorageKeyProtocol
     
     // MARK: Setting Values
