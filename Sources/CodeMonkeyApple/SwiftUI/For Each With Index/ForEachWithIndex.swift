@@ -41,3 +41,13 @@ extension ForEachWithIndex: View {
         }
     }
 }
+
+extension ForEach where ID == Data.Index {
+    // MARK: Public Initialization
+    
+    public init(_ data: Data, @ViewBuilder content: @escaping (ID, Data.Element) -> Content) {
+        self.init(Array(zip(data.indices, data))) {
+            content($0, $1)
+        }
+    }
+}
