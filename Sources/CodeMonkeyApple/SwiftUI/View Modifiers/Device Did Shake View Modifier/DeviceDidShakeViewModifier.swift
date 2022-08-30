@@ -5,7 +5,7 @@
 //  Created by Kyle Hughes on 8/21/21.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 
 import SwiftUI
 import UIKit

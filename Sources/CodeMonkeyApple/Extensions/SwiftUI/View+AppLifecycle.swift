@@ -5,9 +5,10 @@
 //  Created by Kyle Hughes on 8/22/21.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 
 import SwiftUI
+import UIKit
 
 extension View {
     // MARK: Public Instance Interface

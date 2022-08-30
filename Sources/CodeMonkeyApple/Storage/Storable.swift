@@ -20,25 +20,27 @@ public protocol Storable {
     
     // MARK: Interfacing With User Defaults
     
-    static func extract(_ ubiquitousStoreKey: String, from ubiquitousStore: NSUbiquitousKeyValueStore) -> StorableValue?
     static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue?
     
-    func store(_ value: StorableValue, as ubiquitousStoreKey: String, in ubiquitousStore: NSUbiquitousKeyValueStore)
     func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults)
+    
+    #if !os(watchOS)
+    
+    static func extract(_ ubiquitousStoreKey: String, from ubiquitousStore: NSUbiquitousKeyValueStore) -> StorableValue?
+    
+    func store(_ value: StorableValue, as ubiquitousStoreKey: String, in ubiquitousStore: NSUbiquitousKeyValueStore)
+    
+    #endif
 }
 
 // MARK: - Default Implementation
 
 extension Storable {
-    // MARK: Converting to and From Storable Value
+    // MARK: Interfacing With User Defaults
     
     @inlinable
-    public func store(
-        _ value: StorableValue,
-        as ubiquitousStoreKey: String,
-        in ubiquitousStore: NSUbiquitousKeyValueStore
-    ) {
-        ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
@@ -46,7 +48,7 @@ extension Storable {
         userDefaults.set(value, forKey: userDefaultsKey)
     }
     
-    // MARK: Interfacing With User Defaults
+    #if !os(watchOS)
     
     @inlinable
     public static func extract(
@@ -57,9 +59,15 @@ extension Storable {
     }
     
     @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
+    public func store(
+        _ value: StorableValue,
+        as ubiquitousStoreKey: String,
+        in ubiquitousStore: NSUbiquitousKeyValueStore
+    ) {
+        ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
+    
+    #endif
 }
 
 // MARK: - Novel Implementation
@@ -80,18 +88,22 @@ extension Storable {
     @inlinable
     public static func extract<Key>(
         _ key: Key,
+        from userDefaults: UserDefaults
+    ) -> StorableValue? where Key: StorageKeyProtocol {
+        extract(key.id, from: userDefaults)
+    }
+    
+    #if !os(watchOS)
+    
+    @inlinable
+    public static func extract<Key>(
+        _ key: Key,
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? where Key: StorageKeyProtocol {
         extract(key.id, from: ubiquitousStore)
     }
     
-    @inlinable
-    public static func extract<Key>(
-        _ key: Key,
-        from userDefaults: UserDefaults
-    ) -> StorableValue? where Key: StorageKeyProtocol {
-        extract(key.id, from: userDefaults)
-    }
+    #endif
 }
 
 // MARK: - Extension for Bool
@@ -116,6 +128,20 @@ extension Bool: Storable {
     // MARK: Interfacing With User Defaults
     
     @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a `false` value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
+    }
+    
+    @inlinable
+    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        userDefaults.set(value, forKey: userDefaultsKey)
+    }
+    
+    #if !os(watchOS)
+    
+    @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
@@ -123,13 +149,6 @@ extension Bool: Storable {
         // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
         // a `false` value.
         ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
-    }
-    
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
-        // a `false` value.
-        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
@@ -141,10 +160,7 @@ extension Bool: Storable {
         ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
     
-    @inlinable
-    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        userDefaults.set(value, forKey: userDefaultsKey)
-    }
+    #endif
 }
 
 // MARK: - Extension for Data
@@ -167,6 +183,13 @@ extension Data: Storable {
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        userDefaults.data(forKey: userDefaultsKey)
+    }
+    
+    #if !os(watchOS)
     
     @inlinable
     public static func extract(
@@ -174,11 +197,6 @@ extension Data: Storable {
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? {
         ubiquitousStore.data(forKey: ubiquitousStoreKey)
-    }
-
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.data(forKey: userDefaultsKey)
     }
     
     @inlinable
@@ -189,6 +207,8 @@ extension Data: Storable {
     ) {
         ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
+    
+    #endif
 }
 
 // MARK: - Extension for Date
@@ -217,16 +237,23 @@ extension Date: Storable {
     // MARK: Interfacing With User Defaults
     
     @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        TimeInterval.extract(userDefaultsKey, from: userDefaults)
+    }
+
+    @inlinable
+    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        value.store(value, as: userDefaultsKey, in: userDefaults)
+    }
+    
+    #if !os(watchOS)
+
+    @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? {
         TimeInterval.extract(ubiquitousStoreKey, from: ubiquitousStore)
-    }
-    
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        TimeInterval.extract(userDefaultsKey, from: userDefaults)
     }
     
     @inlinable
@@ -238,10 +265,7 @@ extension Date: Storable {
         value.store(value, as: ubiquitousStoreKey, in: ubiquitousStore)
     }
 
-    @inlinable
-    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        value.store(value, as: userDefaultsKey, in: userDefaults)
-    }
+    #endif
 }
 
 // MARK: - Extension for Double
@@ -266,6 +290,20 @@ extension Double: Storable {
     // MARK: Interfacing With User Defaults
     
     @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a 0 value.
+        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
+    }
+
+    @inlinable
+    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        userDefaults.set(value, forKey: userDefaultsKey)
+    }
+    
+    #if !os(watchOS)
+
+    @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
@@ -273,13 +311,6 @@ extension Double: Storable {
         // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
         // a 0 value.
         ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
-    }
-    
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
-        // a 0 value.
-        userDefaults.object(forKey: userDefaultsKey) as? StorableValue
     }
     
     @inlinable
@@ -291,10 +322,7 @@ extension Double: Storable {
         ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
 
-    @inlinable
-    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        userDefaults.set(value, forKey: userDefaultsKey)
-    }
+    #endif
 }
 
 // MARK: - Extension for Float
@@ -319,16 +347,6 @@ extension Float: Storable {
     // MARK: Interfacing With User Defaults
     
     @inlinable
-    public static func extract(
-        _ ubiquitousStoreKey: String,
-        from ubiquitousStore: NSUbiquitousKeyValueStore
-    ) -> StorableValue? {
-        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
-        // a 0 value.
-        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
-    }
-    
-    @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
         // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
         // a 0 value.
@@ -339,6 +357,20 @@ extension Float: Storable {
     public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
         userDefaults.set(value, forKey: userDefaultsKey)
     }
+    
+    #if !os(watchOS)
+
+    @inlinable
+    public static func extract(
+        _ ubiquitousStoreKey: String,
+        from ubiquitousStore: NSUbiquitousKeyValueStore
+    ) -> StorableValue? {
+        // We use the default implementation with `object(forKey)` so that we can differentiate a `nil` value from
+        // a 0 value.
+        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
+    }
+
+    #endif
 }
 
 // MARK: - Extension for Int
@@ -361,14 +393,6 @@ extension Int: Storable {
     }
 
     // MARK: Interfacing With User Defaults
-    
-    @inlinable
-    public static func extract(
-        _ ubiquitousStoreKey: String,
-        from ubiquitousStore: NSUbiquitousKeyValueStore
-    ) -> StorableValue? {
-        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
-    }
 
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
@@ -381,6 +405,18 @@ extension Int: Storable {
     public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
         userDefaults.set(value, forKey: userDefaultsKey)
     }
+    
+    #if !os(watchOS)
+
+    @inlinable
+    public static func extract(
+        _ ubiquitousStoreKey: String,
+        from ubiquitousStore: NSUbiquitousKeyValueStore
+    ) -> StorableValue? {
+        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
+    }
+
+    #endif
 }
 
 // MARK: - Extension for String
@@ -403,18 +439,20 @@ extension String: Storable {
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        userDefaults.string(forKey: userDefaultsKey)
+    }
     
+    #if !os(watchOS)
+
     @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? {
         ubiquitousStore.string(forKey: ubiquitousStoreKey)
-    }
-
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.string(forKey: userDefaultsKey)
     }
     
     @inlinable
@@ -425,6 +463,8 @@ extension String: Storable {
     ) {
         ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
+
+    #endif
 }
 
 // MARK: - Extension for [String]
@@ -447,6 +487,14 @@ extension Array: Storable where Element == String {
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        userDefaults.stringArray(forKey: userDefaultsKey)
+    }
+    
+    #if !os(watchOS)
+
     
     @inlinable
     public static func extract(
@@ -454,11 +502,6 @@ extension Array: Storable where Element == String {
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? {
         ubiquitousStore.array(forKey: ubiquitousStoreKey) as? StorableValue
-    }
-
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        userDefaults.stringArray(forKey: userDefaultsKey)
     }
     
     @inlinable
@@ -469,6 +512,8 @@ extension Array: Storable where Element == String {
     ) {
         ubiquitousStore.set(value, forKey: ubiquitousStoreKey)
     }
+
+    #endif
 }
 
 // MARK: - Extension for URL
@@ -491,14 +536,6 @@ extension URL: Storable {
     }
 
     // MARK: Interfacing With User Defaults
-    
-    @inlinable
-    public static func extract(
-        _ ubiquitousStoreKey: String,
-        from ubiquitousStore: NSUbiquitousKeyValueStore
-    ) -> StorableValue? {
-        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
-    }
 
     @inlinable
     public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
@@ -509,6 +546,18 @@ extension URL: Storable {
     public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
         userDefaults.set(value, forKey: userDefaultsKey)
     }
+    
+    #if !os(watchOS)
+
+    @inlinable
+    public static func extract(
+        _ ubiquitousStoreKey: String,
+        from ubiquitousStore: NSUbiquitousKeyValueStore
+    ) -> StorableValue? {
+        ubiquitousStore.object(forKey: ubiquitousStoreKey) as? StorableValue
+    }
+
+    #endif
 }
 
 // MARK: - Extension for Optionals of Supported Types
@@ -540,18 +589,30 @@ extension Optional: Storable where Wrapped: Storable {
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        Wrapped.extract(userDefaultsKey, from: userDefaults)
+    }
     
+    @inlinable
+    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        switch self {
+        case .none:
+            userDefaults.removeObject(forKey: userDefaultsKey)
+        case let .some(wrapped):
+            wrapped.store(wrapped.encodeForStorage(), as: userDefaultsKey, in: userDefaults)
+        }
+    }
+    
+    #if !os(watchOS)
+
     @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> StorableValue? {
         Wrapped.extract(ubiquitousStoreKey, from: ubiquitousStore)
-    }
-
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        Wrapped.extract(userDefaultsKey, from: userDefaults)
     }
     
     @inlinable
@@ -567,16 +628,8 @@ extension Optional: Storable where Wrapped: Storable {
             wrapped.store(wrapped.encodeForStorage(), as: ubiquitousStoreKey, in: ubiquitousStore)
         }
     }
-    
-    @inlinable
-    public func store(_ value: StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        switch self {
-        case .none:
-            userDefaults.removeObject(forKey: userDefaultsKey)
-        case let .some(wrapped):
-            wrapped.store(wrapped.encodeForStorage(), as: userDefaultsKey, in: userDefaults)
-        }
-    }
+
+    #endif
 }
 
 // MARK: - Extension for RawRepresentables of Supported Types
@@ -599,18 +652,25 @@ extension Storable where Self: RawRepresentable, RawValue: Storable, StorableVal
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
+        RawValue.extract(userDefaultsKey, from: userDefaults)
+    }
     
+    @inlinable
+    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
+    }
+    
+    #if !os(watchOS)
+
     @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
         from ubiquitousStore: NSUbiquitousKeyValueStore
     ) -> RawValue.StorableValue? {
         RawValue.extract(ubiquitousStoreKey, from: ubiquitousStore)
-    }
-
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
-        RawValue.extract(userDefaultsKey, from: userDefaults)
     }
     
     @inlinable
@@ -621,11 +681,8 @@ extension Storable where Self: RawRepresentable, RawValue: Storable, StorableVal
     ) {
         rawValue.store(value, as: ubiquitousStoreKey, in: ubiquitousStore)
     }
-    
-    @inlinable
-    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
-    }
+
+    #endif
 }
 
 // MARK: - Extension for Codable Types
@@ -652,7 +709,14 @@ extension Storable where Self: Codable, StorableValue == String {
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> String? {
+        .extract(userDefaultsKey, from: userDefaults)
+    }
     
+    #if !os(watchOS)
+
     @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
@@ -661,10 +725,7 @@ extension Storable where Self: Codable, StorableValue == String {
         .extract(ubiquitousStoreKey, from: ubiquitousStore)
     }
 
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> String? {
-        .extract(userDefaultsKey, from: userDefaults)
-    }
+    #endif
 }
 
 // MARK: - Extension for Raw Representable & Codable Types (Conflict-Avoidance)
@@ -687,6 +748,18 @@ extension Storable where Self: Codable & RawRepresentable, RawValue == String, S
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
+        RawValue.extract(userDefaultsKey, from: userDefaults)
+    }
+    
+    @inlinable
+    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
+        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
+    }
+    
+    #if !os(watchOS)
     
     @inlinable
     public static func extract(
@@ -697,11 +770,6 @@ extension Storable where Self: Codable & RawRepresentable, RawValue == String, S
     }
 
     @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> RawValue.StorableValue? {
-        RawValue.extract(userDefaultsKey, from: userDefaults)
-    }
-    
-    @inlinable
     public func store(
         _ value: StorableValue,
         as ubiquitousStoreKey: String,
@@ -709,11 +777,8 @@ extension Storable where Self: Codable & RawRepresentable, RawValue == String, S
     ) {
         rawValue.store(value, as: ubiquitousStoreKey, in: ubiquitousStore)
     }
-    
-    @inlinable
-    public func store(_ value: RawValue.StorableValue, as userDefaultsKey: String, in userDefaults: UserDefaults) {
-        rawValue.store(value, as: userDefaultsKey, in: userDefaults)
-    }
+
+    #endif
 }
 
 // MARK: - Extension for Codable & Versionable Types
@@ -742,7 +807,14 @@ extension Storable where Self: Codable & Versionable, StorableValue == String, W
     }
 
     // MARK: Interfacing With User Defaults
+
+    @inlinable
+    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
+        .extract(userDefaultsKey, from: userDefaults)
+    }
     
+    #if !os(watchOS)
+
     @inlinable
     public static func extract(
         _ ubiquitousStoreKey: String,
@@ -751,8 +823,5 @@ extension Storable where Self: Codable & Versionable, StorableValue == String, W
         .extract(ubiquitousStoreKey, from: ubiquitousStore)
     }
 
-    @inlinable
-    public static func extract(_ userDefaultsKey: String, from userDefaults: UserDefaults) -> StorableValue? {
-        .extract(userDefaultsKey, from: userDefaults)
-    }
+    #endif
 }

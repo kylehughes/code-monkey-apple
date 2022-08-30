@@ -37,6 +37,8 @@ public final class NotificationCenterDelegate: NSObject {
 // MARK: - UNUserNotificationCenterDelegate Extension
 
 extension NotificationCenterDelegate: UNUserNotificationCenterDelegate {
+    #if !os(watchOS)
+    
     // MARK: Displaying Notification Settings
     
     public func userNotificationCenter(
@@ -45,4 +47,6 @@ extension NotificationCenterDelegate: UNUserNotificationCenterDelegate {
     ) {
         goToNotificationSettingsSubject.value = true
     }
+    
+    #endif
 }

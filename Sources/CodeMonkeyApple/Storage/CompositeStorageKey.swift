@@ -37,29 +37,33 @@ extension CompositeStorageKey: StorageKeyProtocol {
         Value.compose(from: compose().defaultValue)
     }
     
-    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
-        Value.compose(from: compose().get(from: ubiquitousStore))
-    }
-    
     public func get(from userDefaults: UserDefaults) -> Value {
         Value.compose(from: compose().get(from: userDefaults))
-    }
-    
-    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
-        compose().remove(from: ubiquitousStore)
     }
     
     public func remove(from userDefaults: UserDefaults) {
         compose().remove(from: userDefaults)
     }
     
+    public func set(to newValue: Value, in userDefaults: UserDefaults) {
+        compose().set(to: newValue.encodeForStorage(), in: userDefaults)
+    }
+    
+    #if !os(watchOS)
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        Value.compose(from: compose().get(from: ubiquitousStore))
+    }
+    
+    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        compose().remove(from: ubiquitousStore)
+    }
+    
     public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
         compose().set(to: newValue.encodeForStorage(), in: ubiquitousStore)
     }
     
-    public func set(to newValue: Value, in userDefaults: UserDefaults) {
-        compose().set(to: newValue.encodeForStorage(), in: userDefaults)
-    }
+    #endif
 }
 
 // MARK: - Example

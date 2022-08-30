@@ -116,13 +116,6 @@ where
         )
     }
 
-    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
-        Value(
-            e1.get(from: ubiquitousStore),
-            e2.get(from: ubiquitousStore)
-        )
-    }
-
     public func get(from userDefaults: UserDefaults) -> Value {
         Value(
             e1.get(from: userDefaults),
@@ -130,23 +123,34 @@ where
         )
     }
 
-    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
-        e1.remove(from: ubiquitousStore)
-        e2.remove(from: ubiquitousStore)
-    }
-
     public func remove(from userDefaults: UserDefaults) {
         e1.remove(from: userDefaults)
         e2.remove(from: userDefaults)
-    }
-
-    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
-        e1.set(to: newValue.e1, in: ubiquitousStore)
-        e2.set(to: newValue.e2, in: ubiquitousStore)
     }
 
     public func set(to newValue: Value, in userDefaults: UserDefaults) {
         e1.set(to: newValue.e1, in: userDefaults)
         e2.set(to: newValue.e2, in: userDefaults)
     }
+    
+    #if !os(watchOS)
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        Value(
+            e1.get(from: ubiquitousStore),
+            e2.get(from: ubiquitousStore)
+        )
+    }
+    
+    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        e1.remove(from: ubiquitousStore)
+        e2.remove(from: ubiquitousStore)
+    }
+    
+    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
+        e1.set(to: newValue.e1, in: ubiquitousStore)
+        e2.set(to: newValue.e2, in: ubiquitousStore)
+    }
+    
+    #endif
 }

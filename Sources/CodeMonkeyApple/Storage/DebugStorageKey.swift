@@ -28,17 +28,35 @@ extension DebugStorageKey {
         [id]
     }
     
-    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+    public func get(from userDefaults: UserDefaults) -> Value {
         #if DEBUG
-        .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
+        .decode(for: self, from: Value.extract(self, from: userDefaults))
         #else
         defaultValue
         #endif
     }
     
-    public func get(from userDefaults: UserDefaults) -> Value {
+    public func set(to newValue: Value, in userDefaults: UserDefaults) {
         #if DEBUG
-        .decode(for: self, from: Value.extract(self, from: userDefaults))
+        newValue.store(newValue.encodeForStorage(), as: id, in: userDefaults)
+        #else
+        // NO-OP
+        #endif
+    }
+    
+    public func remove(from userDefaults: UserDefaults) {
+        #if DEBUG
+        userDefaults.removeObject(forKey: id)
+        #else
+        // NO-OP
+        #endif
+    }
+    
+    #if !os(watchOS)
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        #if DEBUG
+        .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
         #else
         defaultValue
         #endif
@@ -52,14 +70,6 @@ extension DebugStorageKey {
         #endif
     }
     
-    public func set(to newValue: Value, in userDefaults: UserDefaults) {
-        #if DEBUG
-        newValue.store(newValue.encodeForStorage(), as: id, in: userDefaults)
-        #else
-        // NO-OP
-        #endif
-    }
-    
     public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
         #if DEBUG
         ubiquitousStore.removeObject(forKey: id)
@@ -68,11 +78,5 @@ extension DebugStorageKey {
         #endif
     }
     
-    public func remove(from userDefaults: UserDefaults) {
-        #if DEBUG
-        userDefaults.removeObject(forKey: id)
-        #else
-        // NO-OP
-        #endif
-    }
+    #endif
 }

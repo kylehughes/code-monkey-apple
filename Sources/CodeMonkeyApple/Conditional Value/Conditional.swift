@@ -89,15 +89,6 @@ where
         }
     }
 
-    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
-        switch self {
-        case let .false(value):
-            return .false(value.get(from: ubiquitousStore))
-        case let .true(value):
-            return .true(value.get(from: ubiquitousStore))
-        }
-    }
-
     public func get(from userDefaults: UserDefaults) -> Value {
         switch self {
         case let .false(value):
@@ -107,40 +98,12 @@ where
         }
     }
 
-    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
-        switch self {
-        case let .false(value):
-            value.remove(from: ubiquitousStore)
-        case let .true(value):
-            value.remove(from: ubiquitousStore)
-        }
-    }
-
     public func remove(from userDefaults: UserDefaults) {
         switch self {
         case let .false(value):
             value.remove(from: userDefaults)
         case let .true(value):
             value.remove(from: userDefaults)
-        }
-    }
-
-    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
-        switch self {
-        case let .false(key):
-            switch newValue {
-            case let .false(value):
-                key.set(to: value, in: ubiquitousStore)
-            case .true:
-                fatalError("Don't do this.")
-            }
-        case let .true(key):
-            switch newValue {
-            case .false:
-                fatalError("Don't do this.")
-            case let .true(value):
-                key.set(to: value, in: ubiquitousStore)
-            }
         }
     }
 
@@ -162,4 +125,45 @@ where
             }
         }
     }
+    
+    #if !os(watchOS)
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        switch self {
+        case let .false(value):
+            return .false(value.get(from: ubiquitousStore))
+        case let .true(value):
+            return .true(value.get(from: ubiquitousStore))
+        }
+    }
+    
+    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        switch self {
+        case let .false(value):
+            value.remove(from: ubiquitousStore)
+        case let .true(value):
+            value.remove(from: ubiquitousStore)
+        }
+    }
+    
+    public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
+        switch self {
+        case let .false(key):
+            switch newValue {
+            case let .false(value):
+                key.set(to: value, in: ubiquitousStore)
+            case .true:
+                fatalError("Don't do this.")
+            }
+        case let .true(key):
+            switch newValue {
+            case .false:
+                fatalError("Don't do this.")
+            case let .true(value):
+                key.set(to: value, in: ubiquitousStore)
+            }
+        }
+    }
+    
+    #endif
 }

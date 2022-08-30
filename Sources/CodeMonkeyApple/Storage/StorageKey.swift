@@ -46,27 +46,31 @@ extension StorageKey: StorageKeyProtocol {
         [id]
     }
     
-    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
-        .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
-    }
-    
     public func get(from userDefaults: UserDefaults) -> Value {
         .decode(for: self, from: Value.extract(self, from: userDefaults))
-    }
-    
-    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
-        ubiquitousStore.removeObject(forKey: id)
     }
     
     public func remove(from userDefaults: UserDefaults) {
         userDefaults.removeObject(forKey: id)
     }
     
+    public func set(to newValue: Value, in userDefaults: UserDefaults) {
+        newValue.store(newValue.encodeForStorage(), as: id, in: userDefaults)
+    }
+    
+    #if !os(watchOS)
+    
+    public func get(from ubiquitousStore: NSUbiquitousKeyValueStore) -> Value {
+        .decode(for: self, from: Value.extract(self, from: ubiquitousStore))
+    }
+    
+    public func remove(from ubiquitousStore: NSUbiquitousKeyValueStore) {
+        ubiquitousStore.removeObject(forKey: id)
+    }
+    
     public func set(to newValue: Value, in ubiquitousStore: NSUbiquitousKeyValueStore) {
         newValue.store(newValue.encodeForStorage(), as: id, in: ubiquitousStore)
     }
     
-    public func set(to newValue: Value, in userDefaults: UserDefaults) {
-        newValue.store(newValue.encodeForStorage(), as: id, in: userDefaults)
-    }
+    #endif
 }

@@ -7,6 +7,8 @@
 
 import Foundation
 
+#if !os(watchOS)
+
 extension NSUbiquitousKeyValueStore: Storage {
     public static let didChangeInternallyNotification = NSNotification.Name(
         "NSUbiquitousKeyValueStore.DidChangeInternally"
@@ -107,3 +109,5 @@ extension NSUbiquitousKeyValueStore: Storage {
         )
     }
 }
+
+#endif
