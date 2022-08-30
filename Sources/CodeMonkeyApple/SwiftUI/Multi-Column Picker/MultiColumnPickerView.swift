@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 7/11/22.
 //
 
+#if canImport(UIKit)
+
 import Foundation
 import SwiftUI
 import UIKit
@@ -141,3 +143,5 @@ extension MultiColumnPickerView {
         public let row: Int
     }
 }
+
+#endif
