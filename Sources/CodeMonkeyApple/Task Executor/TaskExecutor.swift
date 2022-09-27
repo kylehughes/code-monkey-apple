@@ -7,9 +7,9 @@
 
 import Foundation
 
-/// Actor that can constrain the number of concurrent `Task`s being executed, like
-/// `OperationQueue` with `maxConcurrentOperationCount`.
-public actor TaskExecutor<Success> {
+/// Actor that can constrain the number of concurrent `Task`s being executed, like `OperationQueue` with
+/// `maxConcurrentOperationCount`.
+public actor TaskExecutor {
     private let maxConcurrentTaskCount: Int
     
     private var numberOfRunningTasks: Int
@@ -30,7 +30,16 @@ public actor TaskExecutor<Success> {
     
     // MARK: Public Instance Interface
     
-    public func submit(
+    public func submit<Success>(
+        priority: TaskPriority? = nil,
+        _ task: @escaping () async -> Success
+    ) -> Task<Success, Never> {
+        Task(priority: priority) {
+            await submit(task)
+        }
+    }
+    
+    public func submit<Success>(
         priority: TaskPriority? = nil,
         _ task: @escaping () async throws -> Success
     ) -> Task<Success, any Error> {
@@ -39,7 +48,7 @@ public actor TaskExecutor<Success> {
         }
     }
     
-    public func submit(_ task: @escaping () async throws -> Success) async throws -> Success {
+    public func submit<Success>(_ task: @escaping () async throws -> Success) async rethrows -> Success {
         if maxConcurrentTaskCount <= numberOfRunningTasks {
             await withUnsafeContinuation {
                 pendingContinuations.append($0)
