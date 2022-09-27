@@ -16,7 +16,7 @@ public final actor AsyncDoublyLinkedList<Value> {
     
     // MARK: Public Initialization
     
-    public convenience init<Sequence>(
+    public init<Sequence>(
         _ initialValues: Sequence
     ) async where Sequence: Swift.Sequence, Sequence.Element == Value {
         self.init()
@@ -314,7 +314,7 @@ extension AsyncDoublyLinkedList {
         
         // MARK: Internal Initialization
         
-        internal convenience init(_ value: Value, in list: AsyncDoublyLinkedList) {
+        internal init(_ value: Value, in list: AsyncDoublyLinkedList) {
             self.init(value, in: list.id)
         }
         
