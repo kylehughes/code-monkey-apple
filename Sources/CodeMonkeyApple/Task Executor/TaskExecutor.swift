@@ -30,27 +30,22 @@ public actor TaskExecutor<Success> {
     
     // MARK: Public Instance Interface
     
-    public func submit(_ task: @escaping () async throws -> Success) -> Task<Success, any Error> {
-        Task {
+    public func submit(
+        priority: TaskPriority? = nil,
+        _ task: @escaping () async throws -> Success
+    ) -> Task<Success, any Error> {
+        Task(priority: priority) {
             try await submit(task)
         }
     }
     
     public func submit(_ task: @escaping () async throws -> Success) async throws -> Success {
-        guard numberOfRunningTasks < maxConcurrentTaskCount else {
-            await withUnsafeContinuation { continuation in
-                pendingContinuations.append(continuation)
+        if maxConcurrentTaskCount <= numberOfRunningTasks {
+            await withUnsafeContinuation {
+                pendingContinuations.append($0)
             }
-            
-            return try await execute(task)
         }
         
-        return try await execute(task)
-    }
-    
-    // MARK: Private Instance Interface
-    
-    private func execute(_ task: @escaping () async throws -> Success) async throws -> Success {
         numberOfRunningTasks += 1
         
         defer {
