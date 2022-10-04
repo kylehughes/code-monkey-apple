@@ -5,6 +5,8 @@
 //  Created by Kyle Hughes on 10/2/22.
 //
 
+#if canImport(UIKit)
+
 import StoreKit
 import SwiftUI
 
@@ -80,3 +82,5 @@ extension Coordinator: SKStoreProductViewControllerDelegate {
         onDismiss()
     }
 }
+
+#endif

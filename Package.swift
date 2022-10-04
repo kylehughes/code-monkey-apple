@@ -17,31 +17,12 @@ let package = Package(
                 "CodeMonkeyApple"
             ]
         ),
-        .library(
-            name: "CodeMonkeyAppleIntrospect",
-            targets: [
-                "CodeMonkeyAppleIntrospect"
-            ]
-        ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", from: "0.0.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "CodeMonkeyApple",
             dependencies: []
-        ),
-        .target(
-            name: "CodeMonkeyAppleIntrospect",
-            dependencies: [
-                "CodeMonkeyApple",
-                .product(
-                    name: "Introspect",
-                    package: "SwiftUI-Introspect",
-                    condition: .when(platforms: [.iOS, .macOS, .macCatalyst])
-                ),
-            ]
         ),
         .testTarget(
             name: "CodeMonkeyAppleTests",
