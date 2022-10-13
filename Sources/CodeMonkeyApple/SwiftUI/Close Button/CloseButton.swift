@@ -24,6 +24,14 @@ public struct CloseButton {
         self.init(style: style, action: dismiss.callAsFunction)
     }
     
+    public init(style: Style = .system, action: @escaping () async -> Void) {
+        self.init(style: style) {
+            Task {
+                await action()
+            }
+        }
+    }
+    
     public init(style: Style = .system, action: @escaping () -> Void) {
         self.style = style
         self.action = action
