@@ -33,7 +33,7 @@ where
 // MARK: - View Extension
 
 extension ForEachWithIndex: View {
-    // MARK: View Body
+    // MARK: View Bodwy
     
     public var body: ForEach<[(Data.Index, Data.Element)], Data.Index, Content> {
         ForEach(Array(zip(data.indices, data)), id: \.0) { index, element in

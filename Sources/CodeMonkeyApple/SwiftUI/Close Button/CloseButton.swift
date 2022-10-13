@@ -16,14 +16,16 @@ import UIKit
 
 public struct CloseButton {
     private let action: () -> Void
+    private let style: Style
     
     // MARK: Public Initalization
     
-    public init(dismiss: DismissAction) {
-        self.init(action: dismiss.callAsFunction)
+    public init(style: Style = .system, dismiss: DismissAction) {
+        self.init(style: style, action: dismiss.callAsFunction)
     }
     
-    public init(action: @escaping () -> Void) {
+    public init(style: Style = .system, action: @escaping () -> Void) {
+        self.style = style
         self.action = action
     }
 }
@@ -44,8 +46,7 @@ extension CloseButton: View {
             Image(systemName: "xmark")
                 .resizable()
         }
-        .buttonStyle(Style())
-        .tint(.primary)
+        .buttonStyle(ButtonStyle(style: style))
     }
 }
 
@@ -58,14 +59,25 @@ struct CloseButton_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-            Color.white
+            Color.systemGroupedBackground
                 .ignoresSafeArea()
                 .navigationTitle("Preview")
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        CloseButton {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        CloseButton(style: .system) {
                             
                         }
+                        
+                        CloseButton(style: .hierarchical) {
+                            
+                        }
+                        .foregroundColor(.red)
+                        
+                        Image(systemName: "xmark")
+                            .symbolRenderingMode(.hierarchical)
+                            .symbolVariant(.circle.fill)
+                            .font(.body.weight(.medium))
+                            .foregroundStyle(.red)
                     }
                 }
         }
@@ -74,24 +86,38 @@ struct CloseButton_Previews: PreviewProvider {
 
 #endif
 
-// MARK: - CloseButton.Style Definition
+// MARK: - CloseButton.ButtonStyle Definition
 
 extension CloseButton {
-    struct Style {
+    struct ButtonStyle {
+        private let style: Style
+        
         @Environment(\.colorScheme) private var colorScheme
+        
+        // MARK: Internal Initialization
+        
+        init(style: Style) {
+            self.style = style
+        }
     }
 }
 
 // MARK: - ButtonStyle Extension
 
-extension CloseButton.Style: ButtonStyle {
+extension CloseButton.ButtonStyle: ButtonStyle {
     // MARK: Internal Instance Interface
     
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        configuration
+            .label
             .symbolRenderingMode(.hierarchical)
             .font(.body.weight(.heavy))
-            .foregroundStyle(.secondary)
+            .if(style == .hierarchical) {
+                $0.foregroundStyle(.primary)
+            } else: {
+                $0.foregroundStyle(.secondary)
+            }
+            .foregroundStyle(.primary)
             .opacity(configuration.isPressed ? 0.2 : 1.0)
             .animation(
                 .linear(duration: configuration.isPressed ? 0.00 : 0.3),
@@ -101,7 +127,18 @@ extension CloseButton.Style: ButtonStyle {
             .frame(width: 15.333, height: 15.333)
             .padding(7.6)
             .aspectRatio(contentMode: .fit)
-            .background(backgroundColor.opacity(0.0575), in: controlShape)
+            .if(style == .hierarchical) {
+                $0.background(.tertiary, in: controlShape)
+            } else: {
+                switch colorScheme {
+                case .dark:
+                    $0.background(.white.opacity(0.0575), in: controlShape)
+                case .light:
+                    $0.background(.black.opacity(0.0575), in: controlShape)
+                @unknown default:
+                    $0.background(.black.opacity(0.0575), in: controlShape)
+                }
+            }
             .contentShape(controlShape)
     }
     
@@ -110,16 +147,14 @@ extension CloseButton.Style: ButtonStyle {
     private var controlShape: some Shape {
         Circle()
     }
-    
-    private var backgroundColor: Color {
-        switch colorScheme {
-        case .dark:
-            return .white
-        case .light:
-            return .black
-        @unknown default:
-            return .black
-        }
+}
+
+// MARK: - CloseButton.Style Definition
+
+extension CloseButton {
+    public enum Style {
+        case hierarchical
+        case system
     }
 }
 
@@ -127,7 +162,7 @@ extension CloseButton.Style: ButtonStyle {
 
 extension ToolbarItem<(), CloseButton> {
     // MARK: Public Static Interface
-    
+
     public static func closeButton(
         isTrailing: Bool = true,
         using dismiss: DismissAction
@@ -142,7 +177,7 @@ extension ToolbarItem<(), CloseButton> {
 
 extension View {
     // MARK: Public Instance Inteface
-    
+
     public func toolbarWithCloseButton(
         isTrailing: Bool = true,
         using dismiss: DismissAction
