@@ -45,10 +45,6 @@ extension CloseButton: View {
     
     public var body: some View {
         Button {
-            #if canImport(UIKit) && !os(watchOS)
-            HapticFeedbackGenerator.shared.generate(for: .dismissSheet)
-            #endif
-            
             action()
         } label: {
             Image(systemName: "xmark")
@@ -176,7 +172,13 @@ extension ToolbarItem<(), CloseButton> {
         using dismiss: DismissAction
     ) -> Self {
         ToolbarItem(placement: isTrailing ? .navigationBarTrailing : .navigationBarLeading) {
-            CloseButton(dismiss: dismiss)
+            CloseButton {
+                #if canImport(UIKit) && !os(watchOS)
+                HapticFeedbackGenerator.shared.generate(for: .dismissSheet)
+                #endif
+                
+                dismiss()
+            }
         }
     }
 }
