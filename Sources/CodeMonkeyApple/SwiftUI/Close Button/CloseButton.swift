@@ -14,6 +14,8 @@ import SwiftUI
 import UIKit
 #endif
 
+private let dimension: CGFloat = 15 + 1/3
+
 public struct CloseButton {
     private let action: () -> Void
     private let style: Style
@@ -93,14 +95,14 @@ struct CloseButton_Previews: PreviewProvider {
 // MARK: - CloseButton.ButtonStyle Definition
 
 extension CloseButton {
-    struct ButtonStyle {
+    fileprivate struct ButtonStyle {
         private let style: Style
         
         @Environment(\.colorScheme) private var colorScheme
         
-        // MARK: Internal Initialization
+        // MARK: Fileprivate Initialization
         
-        init(style: Style) {
+        fileprivate init(style: Style) {
             self.style = style
         }
     }
@@ -111,37 +113,19 @@ extension CloseButton {
 extension CloseButton.ButtonStyle: ButtonStyle {
     // MARK: Internal Instance Interface
     
-    func makeBody(configuration: Configuration) -> some View {
+    fileprivate func makeBody(configuration: Configuration) -> some View {
         configuration
             .label
             .symbolRenderingMode(.hierarchical)
             .font(.body.weight(.heavy))
-            .if(style == .hierarchical) {
-                $0.foregroundStyle(.primary)
-            } else: {
-                $0.foregroundStyle(.secondary)
-            }
+            .foregroundStyle(foregroundStyle)
             .opacity(configuration.isPressed ? 0.2 : 1.0)
-            .animation(
-                .linear(duration: configuration.isPressed ? 0.00 : 0.3),
-                value: configuration.isPressed
-            )
+            .animation(.linear(duration: configuration.isPressed ? 0.00 : 0.3), value: configuration.isPressed)
             .padding(1.4)
-            .frame(width: 15.333, height: 15.333)
+            .frame(width: dimension, height: dimension)
             .padding(7.6)
             .aspectRatio(contentMode: .fit)
-            .if(style == .hierarchical) {
-                $0.background(.tertiary, in: controlShape)
-            } else: {
-                switch colorScheme {
-                case .dark:
-                    $0.background(.white.opacity(0.0575), in: controlShape)
-                case .light:
-                    $0.background(.black.opacity(0.0575), in: controlShape)
-                @unknown default:
-                    $0.background(.black.opacity(0.0575), in: controlShape)
-                }
-            }
+            .background(backgroundStyle, in: controlShape)
             .contentShape(controlShape)
     }
     
@@ -149,6 +133,37 @@ extension CloseButton.ButtonStyle: ButtonStyle {
     
     private var controlShape: some Shape {
         Circle()
+    }
+    
+    // MARK: View Properties
+    
+    private var backgroundStyle: AnyShapeStyle {
+        switch style {
+        case .hierarchical:
+            return AnyShapeStyle(.tertiary)
+        case .system:
+            return AnyShapeStyle(
+                {
+                    switch colorScheme {
+                    case .dark:
+                        return Color.white
+                    case .light:
+                        return Color.black
+                    @unknown default:
+                        return Color.black
+                    }
+                }().opacity(0.0575)
+            )
+        }
+    }
+    
+    private var foregroundStyle: AnyShapeStyle {
+        switch style {
+        case .hierarchical:
+            return AnyShapeStyle(.primary)
+        case .system:
+            return AnyShapeStyle(.secondary)
+        }
     }
 }
 
