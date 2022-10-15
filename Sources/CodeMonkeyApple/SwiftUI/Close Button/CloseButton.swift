@@ -5,12 +5,12 @@
 //  Created by Kyle Hughes on 9/29/22.
 //
 
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 
 import Foundation
 import SwiftUI
 
-#if canImport(UIKit) && !os(watchOS)
+#if canImport(UIKit)
 import UIKit
 #endif
 
