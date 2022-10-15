@@ -121,7 +121,6 @@ extension CloseButton.ButtonStyle: ButtonStyle {
             } else: {
                 $0.foregroundStyle(.secondary)
             }
-            .foregroundStyle(.primary)
             .opacity(configuration.isPressed ? 0.2 : 1.0)
             .animation(
                 .linear(duration: configuration.isPressed ? 0.00 : 0.3),
