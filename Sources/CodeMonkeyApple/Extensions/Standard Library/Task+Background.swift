@@ -10,210 +10,210 @@ import UIKit
 #endif
 
 extension Task {
-    // MARK: Public Static Interface
+    // MARK: Creating Infallible Backgroundable Tasks
     
+    /// Runs the given nonthrowing operation asynchronously as part of a new top-level task on behalf of the current
+    /// actor. The task will be registered with the system as a background task
+    /// (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// - Parameter taskName: The name to display in the debugger when viewing the background task. If you specify `nil`
+    /// for this parameter, the method generates a name based on the name of the calling function or method.
+    /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
+    /// - Parameter operation: The operation to perform.
     @discardableResult
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async -> Success
-    ) -> Self where Failure == Never {
-        #if canImport(UIKit) && !os(watchOS)
-        Task(priority: priority) {
-            await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
-        }
-        #else
-        Task(priority: priority, operation: operation)
-        #endif
+    ) -> Task<Success, Failure> where Failure == Never {
+        backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
     }
     
+    /// Runs the given nonthrowing operation asynchronously as part of a new top-level task. The task will be registered
+    /// with the system as a background task (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// - Parameter taskName: The name to display in the debugger when viewing the background task. If you specify `nil`
+    /// for this parameter, the method generates a name based on the name of the calling function or method.
+    /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
+    /// - Parameter operation: The operation to perform.
+    @discardableResult
+    public static func backgroundableDetached(
+        named taskName: String? = nil,
+        priority: TaskPriority? = nil,
+        operation: @escaping @Sendable () async -> Success
+    ) -> Task<Success, Failure> where Failure == Never {
+        backgroundable(named: taskName, priority: priority, factory: Task.detached, operation: operation)
+    }
+    
+    // MARK: Creating Fallible Backgroundable Tasks
+    
+    /// Runs the given throwing operation asynchronously as part of a new top-level task on behalf of the current
+    /// actor. The task will be registered with the system as a background task
+    /// (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// - Parameter taskName: The name to display in the debugger when viewing the background task. If you specify `nil`
+    /// for this parameter, the method generates a name based on the name of the calling function or method.
+    /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
+    /// - Parameter operation: The operation to perform.
     @discardableResult
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async throws -> Success
-    ) -> Self where Failure == Error {
-        #if canImport(UIKit) && !os(watchOS)
-        Task(priority: priority) {
-            try await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
-        }
-        #else
-        Task(priority: priority, operation: operation)
-        #endif
+    ) -> Task<Success, Failure> where Failure == Error {
+        backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
     }
     
+    /// Runs the given throwing operation asynchronously as part of a new top-level task. The task will be registered
+    /// with the system as a background task (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// - Parameter taskName: The name to display in the debugger when viewing the background task. If you specify `nil`
+    /// for this parameter, the method generates a name based on the name of the calling function or method.
+    /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
+    /// - Parameter operation: The operation to perform.
     @discardableResult
-    public static func backgroundableAndDetached(
-        named taskName: String? = nil,
-        priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async -> Success
-    ) -> Self where Failure == Never {
-        #if canImport(UIKit) && !os(watchOS)
-        Task.detached(priority: priority) {
-            await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
-        }
-        #else
-        Task(priority: priority, operation: operation)
-        #endif
-    }
-    
-    @discardableResult
-    public static func backgroundableAndDetached(
+    public static func backgroundableDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async throws -> Success
-    ) -> Self where Failure == Error {
-        #if canImport(UIKit) && !os(watchOS)
-        Task.detached(priority: priority) {
-            try await Task.runAsBackgroundable(named: taskName, priority: priority, operation: operation)
-        }
-        #else
-        Task(priority: priority, operation: operation)
-        #endif
+    ) -> Task<Success, Failure> where Failure == Error {
+        backgroundable(named: taskName, priority: priority, factory: Task.detached, operation: operation)
     }
+
+    // MARK: Private Instance Interface
     
-    @MainActor
-    public static func runAsBackgroundable(
-        named taskName: String? = nil,
-        priority: TaskPriority? = nil,
+    /// Runs the given nonthrowing operation asynchronously in the manor of the given factory. The task will be
+    /// registered with the system as a background task
+    /// (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// This is the helper function to allow our `Task.init` and `Task.detached`-oriented functions to share their
+    /// implementation.
+    ///
+    /// - Parameter taskName: The name to display in the debugger when viewing the background task. If you specify `nil`
+    /// for this parameter, the method generates a name based on the name of the calling function or method.
+    /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
+    /// - Parameter factory: The way to create the `Task`.
+    /// - Parameter operation: The operation to perform.
+    private static func backgroundable(
+        named taskName: String?,
+        priority: TaskPriority?,
+        factory: (TaskPriority?, @escaping @Sendable () async -> Success) -> Task<Success, Failure>,
         operation: @escaping @Sendable () async -> Success
-    ) async -> Success where Failure == Never {
-        let task = Task(priority: priority, operation: operation)
-        
+    ) -> Task<Success, Failure> where Failure == Never {
         #if canImport(UIKit) && !os(watchOS)
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier! = nil
-        
-        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            task.cancel()
+        factory(priority) {
+            var mutableBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
             
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            withUnsafeCurrentTask { task in
+                mutableBackgroundTaskIdentifier = beginBackgroundTask(withName: taskName) {
+                    // We know that cancelling the task will also end the background task
+                    task?.cancel()
+                }
+            }
+                        
+            let backgroundTaskIdentifier = mutableBackgroundTaskIdentifier
+            
+            return await withTaskCancellationHandler {
+                let value = await operation()
+                
+                // We know that the background task will be ended if the task is cancelled
+                if not(Task<Never, Never>.isCancelled) {
+                    endBackgroundTask(backgroundTaskIdentifier)
+                }
+                
+                return value
+            } onCancel: {
+                endBackgroundTask(backgroundTaskIdentifier)
             }
         }
-        
-        let value = await task.value
-        
-        if backgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-        }
-        
-        return value
         #else
-        return await task.value
+        factory(priority, operation)
         #endif
     }
     
-    @MainActor
-    public static func runAsBackgroundable(
-        named taskName: String? = nil,
-        priority: TaskPriority? = nil,
+    /// Runs the given throwing operation asynchronously in the manor of the given factory. The task will be
+    /// registered with the system as a background task
+    /// (see: `UIApplication.beginBackgroundTask(withName, expirationHandler:)`).
+    ///
+    /// The lifetime of the registered background task will be automatically managed. The task will be cancelled if the
+    /// system cancels the background task.
+    ///
+    /// This is the helper function to allow our `Task.init` and `Task.detached`-oriented functions to share their
+    /// implementation.
+    private static func backgroundable(
+        named taskName: String?,
+        priority: TaskPriority?,
+        factory: (TaskPriority?, @escaping @Sendable () async throws -> Success) -> Task<Success, Failure>,
         operation: @escaping @Sendable () async throws -> Success
-    ) async throws -> Success where Failure == Error {
-        let task = Task(priority: priority, operation: operation)
-        
+    ) -> Task<Success, Failure> where Failure == Error {
         #if canImport(UIKit) && !os(watchOS)
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier! = nil
-        
-        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            task.cancel()
+        factory(priority) {
+            var mutableBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
             
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            withUnsafeCurrentTask { task in
+                mutableBackgroundTaskIdentifier = beginBackgroundTask(withName: taskName) {
+                    // We know that cancelling the task will also end the background task
+                    task?.cancel()
+                }
             }
-        }
-        
-        do {
-            let value = try await task.value
+                        
+            let backgroundTaskIdentifier = mutableBackgroundTaskIdentifier
             
-            try Task<Never, Never>.checkCancellation()
-            
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            return try await withTaskCancellationHandler {
+                let value = try await operation()
+                
+                // We know that the background task will be ended if the task is cancelled
+                if not(Task<Never, Never>.isCancelled) {
+                    endBackgroundTask(backgroundTaskIdentifier)
+                }
+                
+                return value
+            } onCancel: {
+                endBackgroundTask(backgroundTaskIdentifier)
             }
-            
-            return value
-        } catch {
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
-            
-            throw error
         }
         #else
-        return try await task.value
-        #endif
-    }
-    
-    @MainActor
-    public static func runAsBackgroundableAndDetached(
-        named taskName: String? = nil,
-        priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async -> Success
-    ) async -> Success where Failure == Never {
-        let task = Task.detached(priority: priority, operation: operation)
-        
-        #if canImport(UIKit) && !os(watchOS)
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier! = nil
-        
-        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            task.cancel()
-            
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
-        }
-        
-        let value = await task.value
-        
-        if backgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-        }
-        
-        return value
-        #else
-        return await task.value
-        #endif
-    }
-    
-    @MainActor
-    public static func runAsBackgroundableAndDetached(
-        named taskName: String? = nil,
-        priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async throws -> Success
-    ) async throws -> Success where Failure == Error {
-        let task = Task.detached(priority: priority, operation: operation)
-        
-        #if canImport(UIKit) && !os(watchOS)
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier! = nil
-        
-        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            task.cancel()
-            
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
-        }
-        
-        do {
-            let value = try await task.value
-            
-            try Task<Never, Never>.checkCancellation()
-            
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
-            
-            return value
-        } catch {
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
-            
-            throw error
-        }
-        #else
-        return try await task.value
+        factory(priority, operation)
         #endif
     }
 }
 
+// MARK: - Structured Concurrency Workarounds
+
+#if canImport(UIKit) && !os(watchOS)
+
+private func beginBackgroundTask(expirationHandler handler: (() -> Void)? = nil) -> UIBackgroundTaskIdentifier {
+    UIApplication.shared.beginBackgroundTask(expirationHandler: handler)
+}
+
+private func beginBackgroundTask(
+    withName taskName: String?,
+    expirationHandler handler: (() -> Void)? = nil
+) -> UIBackgroundTaskIdentifier {
+    UIApplication.shared.beginBackgroundTask(withName: taskName, expirationHandler: handler)
+}
+
+private func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
+    guard identifier != .invalid else {
+        return
+    }
+    
+    UIApplication.shared.endBackgroundTask(identifier)
+}
+
+#endif
