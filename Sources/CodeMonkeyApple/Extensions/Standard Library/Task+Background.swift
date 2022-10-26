@@ -27,7 +27,7 @@ extension Task {
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async -> Success
+        @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
         backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
     }
@@ -68,7 +68,7 @@ extension Task {
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async throws -> Success
+        @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
         backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
     }
