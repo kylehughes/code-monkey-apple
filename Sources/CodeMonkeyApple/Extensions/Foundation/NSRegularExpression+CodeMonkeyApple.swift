@@ -38,6 +38,6 @@ extension NSRegularExpression {
     // MARK: Private Static Interface
     
     private static func makeFullRange(for string: String) -> NSRange {
-        NSRange(location: 0, length: string.utf8.count)
+        NSRange(string.startIndex..., in: string)
     }
 }
