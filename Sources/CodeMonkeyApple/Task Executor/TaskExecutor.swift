@@ -30,7 +30,7 @@ public actor TaskExecutor {
     
     // MARK: Public Instance Interface
     
-    public func submit<Success>(
+    public nonisolated func submit<Success>(
         priority: TaskPriority? = nil,
         _ task: @escaping () async -> Success
     ) -> Task<Success, Never> {
@@ -39,7 +39,7 @@ public actor TaskExecutor {
         }
     }
     
-    public func submit<Success>(
+    public nonisolated func submit<Success>(
         priority: TaskPriority? = nil,
         _ task: @escaping () async throws -> Success
     ) -> Task<Success, any Error> {
