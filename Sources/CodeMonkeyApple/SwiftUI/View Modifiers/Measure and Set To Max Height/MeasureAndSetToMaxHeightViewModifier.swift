@@ -39,6 +39,7 @@ extension MeasureAndSetToMaxHeightViewModifier: ViewModifier {
 extension View {
     // MARK: Public Instance Interface
     
+    @inlinable
     func measureAndSetToMaxHeight(storedIn storage: Binding<CGFloat?>) -> some View {
         modifier(MeasureAndSetToMaxHeightViewModifier(value: storage))
     }
