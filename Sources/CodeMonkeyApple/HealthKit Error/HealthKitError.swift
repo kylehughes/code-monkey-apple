@@ -9,12 +9,14 @@
 
 import HealthKit
 
+@available(macOS 13.0, *)
 public enum HealthKitError {
     // NO-OP
 }
 
 // MARK: - HealthKitError.Authorization Definition
 
+@available(macOS 13.0, *)
 extension HealthKitError {
     public enum Authorization: Error {
         case frameworkError(HKError)
@@ -26,6 +28,7 @@ extension HealthKitError {
 
 // MARK: - HealthKitError.Authorization Definition
 
+@available(macOS 13.0, *)
 extension HealthKitError {
     public enum AuthorizationAndPersistence: Error {
         case authorization(Authorization)
@@ -35,6 +38,7 @@ extension HealthKitError {
 
 // MARK: - HealthKitError.SaveObject Definition
 
+@available(macOS 13.0, *)
 extension HealthKitError {
     public enum Persistence: Error {
         case authorizationNotDetermined

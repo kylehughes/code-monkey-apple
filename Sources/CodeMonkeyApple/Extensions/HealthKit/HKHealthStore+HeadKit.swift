@@ -10,6 +10,7 @@
 import Combine
 import HealthKit
 
+@available(macOS 13.0, *)
 extension HKHealthStore {
     // MARK: Public Instance Interface
     
@@ -88,6 +89,7 @@ extension HKHealthStore {
 // MARK: - Previews
 
 #if DEBUG
+@available(macOS 13.0, *)
 extension HKHealthStore {
     public static let preview = HKHealthStore()
 }

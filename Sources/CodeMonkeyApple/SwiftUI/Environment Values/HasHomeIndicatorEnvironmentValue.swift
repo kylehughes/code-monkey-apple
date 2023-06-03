@@ -13,6 +13,10 @@ public struct HasHomeIndicatorKey {
 
 // MARK: - EnvironmentKey Extension
 
+#if canImport(UIKit)
+
+import UIKit
+
 extension HasHomeIndicatorKey: EnvironmentKey {
     // MARK: Getting the Default Value
     
@@ -26,6 +30,16 @@ extension HasHomeIndicatorKey: EnvironmentKey {
         return bottomSafeAreaInset > 0
     }
 }
+
+#else
+
+extension HasHomeIndicatorKey: EnvironmentKey {
+    // MARK: Getting the Default Value
+    
+    public static let defaultValue = false
+}
+
+#endif
 
 // MARK: - Extension for EnvironmentValues
 
