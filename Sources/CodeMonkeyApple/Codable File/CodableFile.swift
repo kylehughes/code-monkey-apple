@@ -8,7 +8,7 @@
 import Foundation
 
 public final class CodableFile<Value> where Value: Codable {
-    public private(set) var value: Value {
+    public var value: Value {
         didSet {
             try? encoder.encode(value).write(to: url)
         }
