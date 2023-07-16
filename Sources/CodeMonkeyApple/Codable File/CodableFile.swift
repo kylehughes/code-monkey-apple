@@ -27,21 +27,25 @@ public final class CodableFile<Value> where Value: Codable {
         decoder: JSONDecoder = .default,
         encoder: JSONEncoder = .default,
         fileManager: FileManager = .default
-    ) throws {
+    ) {
         self.url = url
         self.decoder = decoder
         self.encoder = encoder
         self.fileManager = fileManager
         
-        if fileManager.fileExists(atPath: url.path) {
-            value = try decoder.decode(Value.self, from: Data(contentsOf: url))
-        } else {
-            let defaultValue = defaultValue()
-            
-            try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try fileManager.createFile(atPath: url.path, contents: encoder.encode(defaultValue))
-            
-            value = defaultValue
+        do {
+            if fileManager.fileExists(atPath: url.path) {
+                value = try decoder.decode(Value.self, from: Data(contentsOf: url))
+            } else {
+                let defaultValue = defaultValue()
+                
+                try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try fileManager.createFile(atPath: url.path, contents: encoder.encode(defaultValue))
+                
+                value = defaultValue
+            }
+        } catch {
+            value = defaultValue()
         }
     }
     
