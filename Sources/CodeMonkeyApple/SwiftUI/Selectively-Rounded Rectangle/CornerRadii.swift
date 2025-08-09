@@ -9,7 +9,7 @@ import Accelerate
 import CoreGraphics
 import SwiftUI
 
-public struct CornerRadii: Equatable {
+public struct CornerRadii: Equatable, Hashable, Sendable {
     public private(set) var bottomLeft: CGFloat
     public private(set) var bottomRight: CGFloat
     public private(set) var topLeft: CGFloat
