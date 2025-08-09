@@ -24,12 +24,13 @@ extension Task {
     /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
     /// - Parameter operation: The operation to perform.
     @discardableResult
+    @inlinable
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
-        backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
+        backgroundable(named: taskName, priority: priority, factory: .attached, operation: operation)
     }
     
     /// Runs the given nonthrowing operation asynchronously as part of a new top-level task. The task will be registered
@@ -43,12 +44,13 @@ extension Task {
     /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
     /// - Parameter operation: The operation to perform.
     @discardableResult
+    @inlinable
     public static func backgroundableDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
-        backgroundable(named: taskName, priority: priority, factory: Task.detached, operation: operation)
+        backgroundable(named: taskName, priority: priority, factory: .detached, operation: operation)
     }
     
     // MARK: Creating Fallible Backgroundable Tasks
@@ -65,12 +67,13 @@ extension Task {
     /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
     /// - Parameter operation: The operation to perform.
     @discardableResult
+    @inlinable
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
-        backgroundable(named: taskName, priority: priority, factory: Task.init, operation: operation)
+        backgroundable(named: taskName, priority: priority, factory: .attached, operation: operation)
     }
     
     /// Runs the given throwing operation asynchronously as part of a new top-level task. The task will be registered
@@ -84,15 +87,16 @@ extension Task {
     /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
     /// - Parameter operation: The operation to perform.
     @discardableResult
+    @inlinable
     public static func backgroundableDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
-        backgroundable(named: taskName, priority: priority, factory: Task.detached, operation: operation)
+        backgroundable(named: taskName, priority: priority, factory: .detached, operation: operation)
     }
 
-    // MARK: Private Instance Interface
+    // MARK: Internal Instance Interface
     
     /// Runs the given nonthrowing operation asynchronously in the manor of the given factory. The task will be
     /// registered with the system as a background task
@@ -109,14 +113,15 @@ extension Task {
     /// - Parameter priority: The priority of the task. Pass `nil` to use the priority from `Task.currentPriority`.
     /// - Parameter factory: The way to create the `Task`.
     /// - Parameter operation: The operation to perform.
-    private static func backgroundable(
+    @usableFromInline
+    static func backgroundable(
         named taskName: String?,
         priority: TaskPriority?,
-        factory: (TaskPriority?, @escaping @Sendable () async -> Success) -> Task<Success, Failure>,
+        factory: Factory,
         operation: @escaping @Sendable () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
         #if canImport(UIKit) && !os(watchOS)
-        factory(priority) {
+        return factory.makeTask(priority: priority) {
             var mutableBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
             
             withUnsafeCurrentTask { task in
@@ -142,7 +147,7 @@ extension Task {
             }
         }
         #else
-        factory(priority, operation)
+        return factory.makeTask(priority: priority, operation: operation)
         #endif
     }
     
@@ -155,14 +160,15 @@ extension Task {
     ///
     /// This is the helper function to allow our `Task.init` and `Task.detached`-oriented functions to share their
     /// implementation.
-    private static func backgroundable(
+    @usableFromInline
+    static func backgroundable(
         named taskName: String?,
         priority: TaskPriority?,
-        factory: (TaskPriority?, @escaping @Sendable () async throws -> Success) -> Task<Success, Failure>,
+        factory: Factory,
         operation: @escaping @Sendable () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
         #if canImport(UIKit) && !os(watchOS)
-        factory(priority) {
+        return factory.makeTask(priority: priority) {
             var mutableBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
             
             withUnsafeCurrentTask { task in
@@ -188,7 +194,7 @@ extension Task {
             }
         }
         #else
-        factory(priority, operation)
+        return factory.makeTask(priority: priority, operation: operation)
         #endif
     }
 }
@@ -217,3 +223,35 @@ private func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
 }
 
 #endif
+
+// MARK: - TaskFactory Definition
+
+extension Task {
+    @usableFromInline
+    enum Factory {
+        case attached
+        case detached
+        
+        @usableFromInline
+        func makeTask(
+            priority: TaskPriority?,
+            operation: @escaping @Sendable () async -> Success
+        ) -> Task<Success, Failure> where Failure == Never {
+            switch self {
+            case .attached: Task(priority: priority, operation: operation)
+            case .detached: Task.detached(priority: priority, operation: operation)
+            }
+        }
+        
+        @usableFromInline
+        func makeTask(
+            priority: TaskPriority?,
+            operation: @escaping @Sendable () async throws -> Success
+        ) -> Task<Success, Failure> where Failure == any Error {
+            switch self {
+            case .attached: Task(priority: priority, operation: operation)
+            case .detached: Task.detached(priority: priority, operation: operation)
+            }
+        }
+    }
+}
