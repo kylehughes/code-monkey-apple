@@ -7,209 +7,79 @@
 
 #if !os(macOS) && !os(watchOS)
 
-import Foundation
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-#endif
-
-private let dimension: CGFloat = 15 + 1/3
-
 public struct CloseButton {
-    private let action: () -> Void
-    private let style: Style
+    // MARK: Internal Properties
     
-    // MARK: Public Initalization
+    @usableFromInline
+    let action: () -> Void
+
+    // MARK: Public Initialization
     
-    public init(style: Style = .system, dismiss: DismissAction) {
-        self.init(style: style, action: dismiss.callAsFunction)
-    }
-    
-    public init(style: Style = .system, action: @escaping () async -> Void) {
-        self.init(style: style) {
-            Task {
-                await action()
-            }
-        }
-    }
-    
-    public init(style: Style = .system, action: @escaping () -> Void) {
-        self.style = style
+    @inlinable
+    public init(action: @escaping () -> Void) {
         self.action = action
     }
 }
 
-// MARK: - View Extension
+// MARK: - UIViewRepresentable Extension
 
-extension CloseButton: View {
-    // MARK: View Body
+extension CloseButton: UIViewRepresentable {
+    // MARK: Public Instance Interface
     
-    public var body: some View {
-        Button {
-            action()
-        } label: {
-            Image(systemName: "xmark")
-                .resizable()
+    @inlinable
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(action: action)
+    }
+
+    @inlinable
+    public func makeUIView(context: Context) -> UIButton {
+        let view = UIButton(type: .close)
+        
+        view.addTarget(context.coordinator, action: #selector(Coordinator.perform), for: .primaryActionTriggered)
+
+        view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        view.setContentCompressionResistancePriority(.required, for: .vertical)
+        view.setContentHuggingPriority(.required, for: .horizontal)
+        view.setContentHuggingPriority(.required, for: .vertical)
+
+        return view
+    }
+
+    @inlinable
+    public func updateUIView(_ uiView: UIButton, context: Context) {
+        context.coordinator.action = action
+    }
+}
+
+// MARK: - Coordinator Definition
+
+extension CloseButton {
+    public final class Coordinator {
+        @usableFromInline
+        var action: () -> Void
+
+        @usableFromInline
+        init(action: @escaping () -> Void) {
+            self.action = action
         }
-        .buttonStyle(ButtonStyle(style: style))
+
+        @objc
+        @usableFromInline
+        func perform() {
+            action()
+        }
     }
 }
 
 #if DEBUG
 
-// MARK: - Previews
-
-struct CloseButton_Previews: PreviewProvider {
-    // MARK: Preview Body
-    
-    static var previews: some View {
-        NavigationView {
-            Color.systemGroupedBackground
-                .ignoresSafeArea()
-                .navigationTitle("Preview")
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        CloseButton(style: .system) {
-                            
-                        }
-                        
-                        CloseButton(style: .hierarchical) {
-                            
-                        }
-                        .foregroundColor(.red)
-                        
-                        Image(systemName: "xmark")
-                            .symbolRenderingMode(.hierarchical)
-                            .symbolVariant(.circle.fill)
-                            .font(.body.weight(.medium))
-                            .foregroundStyle(.red)
-                    }
-                }
-        }
-    }
+@available(iOS 17.0, *)
+#Preview(traits: .sizeThatFitsLayout) {
+    CloseButton {}
 }
 
 #endif
-
-// MARK: - CloseButton.ButtonStyle Definition
-
-extension CloseButton {
-    fileprivate struct ButtonStyle {
-        private let style: Style
-        
-        @Environment(\.colorScheme) private var colorScheme
-        
-        // MARK: Fileprivate Initialization
-        
-        fileprivate init(style: Style) {
-            self.style = style
-        }
-    }
-}
-
-// MARK: - ButtonStyle Extension
-
-extension CloseButton.ButtonStyle: ButtonStyle {
-    // MARK: Internal Instance Interface
-    
-    fileprivate func makeBody(configuration: Configuration) -> some View {
-        configuration
-            .label
-            .symbolRenderingMode(.hierarchical)
-            .font(.body.weight(.heavy))
-            .foregroundStyle(foregroundStyle)
-            .opacity(configuration.isPressed ? 0.2 : 1.0)
-            .animation(.linear(duration: configuration.isPressed ? 0.00 : 0.3), value: configuration.isPressed)
-            .padding(1.4)
-            .frame(width: dimension, height: dimension)
-            .padding(7.6)
-            .aspectRatio(contentMode: .fit)
-            .background(backgroundStyle, in: controlShape)
-            .contentShape(controlShape)
-    }
-    
-    // MARK: Subviews
-    
-    private var controlShape: some Shape {
-        Circle()
-    }
-    
-    // MARK: View Properties
-    
-    private var backgroundStyle: AnyShapeStyle {
-        switch style {
-        case .hierarchical:
-            return AnyShapeStyle(.tertiary)
-        case .system:
-            return AnyShapeStyle(
-                {
-                    switch colorScheme {
-                    case .dark:
-                        return Color.white
-                    case .light:
-                        return Color.black
-                    @unknown default:
-                        return Color.black
-                    }
-                }().opacity(0.0575)
-            )
-        }
-    }
-    
-    private var foregroundStyle: AnyShapeStyle {
-        switch style {
-        case .hierarchical:
-            return AnyShapeStyle(.primary)
-        case .system:
-            return AnyShapeStyle(.secondary)
-        }
-    }
-}
-
-// MARK: - CloseButton.Style Definition
-
-extension CloseButton {
-    public enum Style {
-        case hierarchical
-        case system
-    }
-}
-
-// MARK: - Extension for ToolbarItem
-
-extension ToolbarItem<(), CloseButton> {
-    // MARK: Public Static Interface
-
-    public static func closeButton(
-        isTrailing: Bool = true,
-        using dismiss: DismissAction
-    ) -> Self {
-        ToolbarItem(placement: isTrailing ? .navigationBarTrailing : .navigationBarLeading) {
-            CloseButton {
-                #if canImport(UIKit) && !os(watchOS)
-                HapticFeedbackGenerator.shared.generate(for: .dismissSheet)
-                #endif
-                
-                dismiss()
-            }
-        }
-    }
-}
-
-// MARK: - Extension for View
-
-extension View {
-    // MARK: Public Instance Inteface
-
-    public func toolbarWithCloseButton(
-        isTrailing: Bool = true,
-        using dismiss: DismissAction
-    ) -> some View {
-        toolbar {
-            ToolbarItem.closeButton(using: dismiss)
-        }
-    }
-}
 
 #endif
