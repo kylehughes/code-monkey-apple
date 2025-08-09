@@ -73,7 +73,47 @@ extension CloseButton {
     }
 }
 
+// MARK: - Extension for ToolbarItem
+
+extension ToolbarItem<(), CloseButton> {
+    // MARK: Public Static Interface
+
+    @inlinable
+    public static func closeButton(
+        isTrailing: Bool = true,
+        using dismiss: DismissAction
+    ) -> Self {
+        ToolbarItem(placement: isTrailing ? .navigationBarTrailing : .navigationBarLeading) {
+            CloseButton {
+                #if canImport(UIKit) && !os(watchOS)
+                HapticFeedbackGenerator.shared.generate(for: .dismissSheet)
+                #endif
+                
+                dismiss()
+            }
+        }
+    }
+}
+
+// MARK: - Extension for View
+
+extension View {
+    // MARK: Public Instance Inteface
+
+    @inlinable
+    public func toolbarWithCloseButton(
+        isTrailing: Bool = true,
+        using dismiss: DismissAction
+    ) -> some View {
+        toolbar {
+            ToolbarItem.closeButton(using: dismiss)
+        }
+    }
+}
+
 #if DEBUG
+
+// MARK: - Previews
 
 @available(iOS 17.0, *)
 #Preview(traits: .sizeThatFitsLayout) {
