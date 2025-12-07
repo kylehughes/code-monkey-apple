@@ -28,7 +28,7 @@ extension Task {
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async -> Success
+        @_implicitSelfCapture @_inheritActorContext operation: @Sendable @escaping () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
         backgroundable(named: taskName, priority: priority, factory: .attached, operation: operation)
     }
@@ -48,7 +48,7 @@ extension Task {
     public static func backgroundableDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async -> Success
+        operation: @Sendable @escaping () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
         backgroundable(named: taskName, priority: priority, factory: .detached, operation: operation)
     }
@@ -71,7 +71,7 @@ extension Task {
     public static func backgroundable(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        @_implicitSelfCapture @_inheritActorContext operation: @escaping @Sendable () async throws -> Success
+        @_implicitSelfCapture @_inheritActorContext operation: @Sendable @escaping () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
         backgroundable(named: taskName, priority: priority, factory: .attached, operation: operation)
     }
@@ -91,7 +91,7 @@ extension Task {
     public static func backgroundableDetached(
         named taskName: String? = nil,
         priority: TaskPriority? = nil,
-        operation: @escaping @Sendable () async throws -> Success
+        operation: @Sendable @escaping () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
         backgroundable(named: taskName, priority: priority, factory: .detached, operation: operation)
     }
@@ -118,7 +118,7 @@ extension Task {
         named taskName: String?,
         priority: TaskPriority?,
         factory: Factory,
-        operation: @escaping @Sendable () async -> Success
+        operation: @Sendable @escaping () async -> Success
     ) -> Task<Success, Failure> where Failure == Never {
         #if canImport(UIKit) && !os(watchOS)
         return factory.makeTask(priority: priority) {
@@ -165,7 +165,7 @@ extension Task {
         named taskName: String?,
         priority: TaskPriority?,
         factory: Factory,
-        operation: @escaping @Sendable () async throws -> Success
+        operation: @Sendable @escaping () async throws -> Success
     ) -> Task<Success, Failure> where Failure == Error {
         #if canImport(UIKit) && !os(watchOS)
         return factory.makeTask(priority: priority) {
@@ -235,7 +235,7 @@ extension Task {
         @usableFromInline
         func makeTask(
             priority: TaskPriority?,
-            operation: @escaping @Sendable () async -> Success
+            operation: sending @escaping () async -> Success
         ) -> Task<Success, Failure> where Failure == Never {
             switch self {
             case .attached: Task(priority: priority, operation: operation)
@@ -246,7 +246,7 @@ extension Task {
         @usableFromInline
         func makeTask(
             priority: TaskPriority?,
-            operation: @escaping @Sendable () async throws -> Success
+            operation: sending @escaping () async throws -> Success
         ) -> Task<Success, Failure> where Failure == any Error {
             switch self {
             case .attached: Task(priority: priority, operation: operation)
