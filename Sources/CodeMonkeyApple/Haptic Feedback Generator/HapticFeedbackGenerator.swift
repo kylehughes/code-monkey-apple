@@ -28,29 +28,30 @@ import UIKit
 // MARK: - HapticFeedback Definition
 
 /// A convenience wrapper for `HapticFeedbackGenerator.shared`.
+@MainActor
 public enum HapticFeedback {
     // MARK: Public Static Interface
-    
+
     @inlinable
     public static func generate(using preparedFeedback: HapticFeedbackGenerator.PreparedFeedback) {
         HapticFeedbackGenerator.shared.generate(using: preparedFeedback)
     }
-    
+
     @inlinable
     public static func generate(_ feedback: HapticFeedbackGenerator.Feedback?) {
         HapticFeedbackGenerator.shared.generate(feedback)
     }
-    
+
     @inlinable
     public static func generate(_ feedback: HapticFeedbackGenerator.Feedback) {
         HapticFeedbackGenerator.shared.generate(feedback)
     }
-    
+
     @inlinable
     public static func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback?) {
         HapticFeedbackGenerator.shared.generate(for: semanticFeedback)
     }
-    
+
     @inlinable
     public static func generate(for semanticFeedback: HapticFeedbackGenerator.SemanticFeedback) {
         HapticFeedbackGenerator.shared.generate(for: semanticFeedback)
@@ -69,37 +70,37 @@ public enum HapticFeedback {
     ) -> HapticFeedbackGenerator.PreparedFeedback {
         HapticFeedbackGenerator.shared.prepare(for: semanticFeedback)
     }
-    
+
     @inlinable
     public static func prepareAgain(_ preparedFeedback: HapticFeedbackGenerator.PreparedFeedback) {
         HapticFeedbackGenerator.shared.prepareAgain(preparedFeedback)
     }
-    
+
     @inlinable
     public static func setIsDisabled(_ isDisabled: Bool) {
         HapticFeedbackGenerator.shared.setIsDisabled(isDisabled)
     }
-    
+
     @inlinable
     public static func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledKey, in: userDefaults)
     }
-    
+
     @inlinable
     public static func setIsDisabled(basedOn isDisabledProvider: @escaping HapticFeedbackGenerator.IsDisabledProvider) {
         HapticFeedbackGenerator.shared.setIsDisabled(basedOn: isDisabledProvider)
     }
-    
+
     @inlinable
     public static func setIsEnabled(_ isEnabled: Bool) {
         HapticFeedbackGenerator.shared.setIsEnabled(isEnabled)
     }
-    
+
     @inlinable
     public static func setIsEnabled(basedOn isEnabledKey: String, in userDefaults: UserDefaults = .standard) {
         HapticFeedbackGenerator.shared.setIsEnabled(basedOn: isEnabledKey, in: userDefaults)
     }
-    
+
     @inlinable
     public static func setIsEnabled(basedOn isEnabledProvider: @escaping HapticFeedbackGenerator.IsEnabledProvider) {
         HapticFeedbackGenerator.shared.setIsEnabled(basedOn: isEnabledProvider)
@@ -108,12 +109,13 @@ public enum HapticFeedback {
 
 // MARK: - HapticFeedbackGenerator Definition
 
-public final class HapticFeedbackGenerator {
-    public typealias IsDisabledProvider = () -> Bool
-    public typealias IsEnabledProvider = () -> Bool
-    
+@MainActor
+public final class HapticFeedbackGenerator: Sendable {
+    public typealias IsDisabledProvider = @Sendable () -> Bool
+    public typealias IsEnabledProvider = @Sendable () -> Bool
+
     public static let shared = HapticFeedbackGenerator()
-    
+
     private var isEnabledProvider: IsEnabledProvider
     
     // MARK: Public Initialization
@@ -127,6 +129,7 @@ public final class HapticFeedbackGenerator {
     }
     
     public convenience init(isDisabledKey: String, userDefaults: UserDefaults = .standard) {
+        nonisolated(unsafe) let userDefaults = userDefaults
         self.init(
             isDisabledProvider: {
                 userDefaults.bool(forKey: isDisabledKey)
@@ -151,6 +154,7 @@ public final class HapticFeedbackGenerator {
     }
     
     public convenience init(isEnabledKey: String, userDefaults: UserDefaults = .standard) {
+        nonisolated(unsafe) let userDefaults = userDefaults
         self.init(
             isEnabledProvider: {
                 userDefaults.bool(forKey: isEnabledKey)
@@ -215,6 +219,7 @@ public final class HapticFeedbackGenerator {
     }
     
     public func setIsDisabled(basedOn isDisabledKey: String, in userDefaults: UserDefaults = .standard) {
+        nonisolated(unsafe) let userDefaults = userDefaults
         setIsDisabled {
             userDefaults.bool(forKey: isDisabledKey)
         }
@@ -233,6 +238,7 @@ public final class HapticFeedbackGenerator {
     }
     
     public func setIsEnabled(basedOn isEnabledKey: String, in userDefaults: UserDefaults = .standard) {
+        nonisolated(unsafe) let userDefaults = userDefaults
         setIsEnabled {
             userDefaults.bool(forKey: isEnabledKey)
         }
@@ -246,13 +252,13 @@ public final class HapticFeedbackGenerator {
 // MARK: - HapticFeedbackGenerator.Feedback Definition
 
 extension HapticFeedbackGenerator {
-    public enum Feedback: SynthesizedIdentifiable {
+    public enum Feedback: SynthesizedIdentifiable, Sendable {
         case impact(Impact)
         case notification(Notification)
         case selection(Selection)
-        
+
         // MARK: Public Static Interface
-        
+
         public static var selection: Feedback {
             .selection(.selectionChanged)
         }
@@ -263,7 +269,7 @@ extension HapticFeedbackGenerator {
 
 extension HapticFeedbackGenerator.Feedback {
     /// - Attention: Intensity, if supplied, expects a value in the range [0.0, 1.0].
-    public enum Impact: SynthesizedIdentifiable {
+    public enum Impact: SynthesizedIdentifiable, Sendable {
         case heavy(CGFloat? = nil)
         case light(CGFloat? = nil)
         case medium(CGFloat? = nil)
@@ -327,7 +333,7 @@ extension HapticFeedbackGenerator.Feedback {
 // MARK: - HapticFeedbackGenerator.Feedback.Notification Definition
 
 extension HapticFeedbackGenerator.Feedback {
-    public enum Notification: SynthesizedIdentifiable {
+    public enum Notification: SynthesizedIdentifiable, Sendable {
         case error
         case success
         case warning
@@ -350,7 +356,7 @@ extension HapticFeedbackGenerator.Feedback {
 // MARK: - HapticFeedbackGenerator.Feedback.Selection Definition
 
 extension HapticFeedbackGenerator.Feedback {
-    public enum Selection: SynthesizedIdentifiable {
+    public enum Selection: SynthesizedIdentifiable, Sendable {
         case selectionChanged
     }
 }
@@ -358,6 +364,7 @@ extension HapticFeedbackGenerator.Feedback {
 // MARK: - HapticFeedbackGenerator.FeedbackAndGenerator Definition
 
 extension HapticFeedbackGenerator {
+    @MainActor
     fileprivate enum FeedbackAndGenerator {
         case impact(Feedback.Impact, UIImpactFeedbackGenerator, IsEnabledProvider)
         case notification(Feedback.Notification, UINotificationFeedbackGenerator, IsEnabledProvider)
@@ -460,6 +467,7 @@ extension HapticFeedbackGenerator {
 // MARK: - HapticFeedbackGenerator.PreparedFeedback Definition
 
 extension HapticFeedbackGenerator {
+    @MainActor
     public struct PreparedFeedback {
         fileprivate let feedbackAndGenerator: FeedbackAndGenerator
         
@@ -486,11 +494,11 @@ extension HapticFeedbackGenerator {
 // MARK: - HapticFeedbackGenerator.SemanticFeedback Definition
 
 extension HapticFeedbackGenerator {
-    public struct SemanticFeedback {
+    public struct SemanticFeedback: Sendable {
         fileprivate let base: Feedback
-        
+
         // MARK: Public Initialization
-        
+
         public init(_ base: Feedback) {
             self.base = base
         }

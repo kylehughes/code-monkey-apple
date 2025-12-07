@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.2
 
 import PackageDescription
 
@@ -6,9 +6,9 @@ let package = Package(
     name: "code-monkey-apple",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v12),
-        .watchOS(.v8)
+        .iOS(.v26),
+        .macOS(.v26),
+        .watchOS(.v26)
     ],
     products: [
         .library(

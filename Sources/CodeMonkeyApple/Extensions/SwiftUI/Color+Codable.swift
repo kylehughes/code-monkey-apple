@@ -17,7 +17,7 @@ import AppKit
 
 // MARK: - Decodable Extension
 
-extension Color: Decodable {
+extension Color: @retroactive Decodable {
     // MARK: Public Instance Interface
     
     public init(from decoder: Decoder) throws {
@@ -32,7 +32,7 @@ extension Color: Decodable {
 
 // MARK: - Encodable Extension
 
-extension Color: Encodable {
+extension Color: @retroactive Encodable {
     // MARK: Public Instance Interface
     
     public func encode(to encoder: Encoder) throws {

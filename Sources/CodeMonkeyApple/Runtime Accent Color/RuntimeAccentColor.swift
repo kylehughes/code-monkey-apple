@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum RuntimeAccentColor: String, CaseIterable, Storable, SynthesizedIdentifiable {
+public enum RuntimeAccentColor: String, CaseIterable, SynthesizedIdentifiable, Sendable {
     case blue
     case brown
     case coral

@@ -18,7 +18,7 @@ extension CLLocationCoordinate2D {
 
 // MARK: - Decodable Extension
 
-extension CLLocationCoordinate2D: Decodable {
+extension CLLocationCoordinate2D: @retroactive Decodable {
     // MARK: Public Initialization
     
     public init(from decoder: Decoder) throws {
@@ -33,7 +33,7 @@ extension CLLocationCoordinate2D: Decodable {
 
 // MARK: - Encodable Extension
 
-extension CLLocationCoordinate2D: Encodable {
+extension CLLocationCoordinate2D: @retroactive Encodable {
     // MARK: Public Instance Interface
     
     public func encode(to encoder: Encoder) throws {

@@ -9,7 +9,7 @@ import CoreLocation
 
 // MARK: - Hashable Extension
 
-extension CLLocationCoordinate2D: Hashable {
+extension CLLocationCoordinate2D: @retroactive Hashable {
     // MARK: Public Static Interface
     
     public func hash(into hasher: inout Hasher) {

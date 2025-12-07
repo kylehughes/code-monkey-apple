@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum RuntimeColorScheme: String, Codable, Storable, SynthesizedIdentifiable {
+public enum RuntimeColorScheme: String, Codable, SynthesizedIdentifiable, Sendable {
     case dark = "dark"
     case light = "light"
     case system = "system"

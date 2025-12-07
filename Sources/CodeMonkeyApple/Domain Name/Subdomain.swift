@@ -5,7 +5,7 @@
 //  Created by Kyle Hughes on 3/21/21.
 //
 
-public struct Subdomain: Equatable, Hashable, Codable, RawRepresentable {
+public struct Subdomain: Equatable, Hashable, Codable, RawRepresentable, Sendable {
     public let rawValue: String
     
     // MARK: Public Initialization

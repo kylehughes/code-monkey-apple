@@ -9,7 +9,7 @@ import CoreLocation
 
 // MARK: - Equatable Extension
 
-extension CLLocationCoordinate2D: Equatable {
+extension CLLocationCoordinate2D: @retroactive Equatable {
     // MARK: Public Static Interface
     
     public static func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {

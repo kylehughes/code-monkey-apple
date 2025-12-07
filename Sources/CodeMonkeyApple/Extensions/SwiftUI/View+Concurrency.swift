@@ -9,19 +9,21 @@ import SwiftUI
 
 extension View {
     // MARK: Public Instance Interface
-    
+
+    @MainActor
     public func onChange<Value>(
         of value: Value,
-        perform action: @escaping (Value) async -> Void
-    ) -> some View where Value : Equatable {
-        onChange(of: value) { newValue in
+        perform action: @escaping @Sendable (Value) async -> Void
+    ) -> some View where Value: Equatable & Sendable {
+        onChange(of: value) { oldValue, newValue in
             Task {
                 await action(newValue)
             }
         }
     }
-    
-    public func onTapGesture(count: Int = 1, perform action: @escaping () async -> Void) -> some View {
+
+    @MainActor
+    public func onTapGesture(count: Int = 1, perform action: @escaping @Sendable () async -> Void) -> some View {
         onTapGesture(count: count) {
             Task {
                 await action()
