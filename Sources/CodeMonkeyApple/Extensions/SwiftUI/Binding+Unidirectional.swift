@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-extension Binding {
+extension Binding where Value: Sendable {
     // MARK: Unidirectional Initialization
-    
-    public init(_ constant: Value, set: @escaping (Value) -> Void) {
+
+    public init(_ constant: Value, set: @escaping @Sendable (Value) -> Void) {
         self.init(get: { constant }, set: set)
     }
 }

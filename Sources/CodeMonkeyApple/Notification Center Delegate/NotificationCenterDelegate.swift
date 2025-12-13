@@ -37,15 +37,19 @@ public final class NotificationCenterDelegate: NSObject, Sendable {
 
 // MARK: - UNUserNotificationCenterDelegate Extension
 
+#if os(watchOS)
+extension NotificationCenterDelegate: UNUserNotificationCenterDelegate {
+    // No delegate methods available on watchOS
+}
+#else
 extension NotificationCenterDelegate: @preconcurrency UNUserNotificationCenterDelegate {
     // MARK: Displaying Notification Settings
 
-    #if !os(watchOS)
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         openSettingsFor notification: UNNotification?
     ) {
         goToNotificationSettingsSubject.value = true
     }
-    #endif
 }
+#endif
