@@ -111,8 +111,8 @@ public enum HapticFeedback {
 
 @MainActor
 public final class HapticFeedbackGenerator: Sendable {
-    public typealias IsDisabledProvider = @Sendable () -> Bool
-    public typealias IsEnabledProvider = @Sendable () -> Bool
+    public typealias IsDisabledProvider = @MainActor () -> Bool
+    public typealias IsEnabledProvider = @MainActor () -> Bool
 
     public static let shared = HapticFeedbackGenerator()
 
