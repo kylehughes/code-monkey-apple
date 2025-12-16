@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-@available(iOS 15.0, macOS 12.0, watchOS 8.0, *)
 extension Button {
     // MARK: Creating a Button
-    
-    public init(asyncAction: @escaping () async -> Void, label: () -> Label) {
+
+    @MainActor
+    public init(asyncAction: @escaping @Sendable () async -> Void, label: () -> Label) {
         self.init(
             action: {
                 Task {
@@ -21,8 +21,9 @@ extension Button {
             label: label
         )
     }
-    
-    public init(_ titleKey: LocalizedStringKey, asyncAction: @escaping () async -> Void) where Label == Text {
+
+    @MainActor
+    public init(_ titleKey: LocalizedStringKey, asyncAction: @escaping @Sendable () async -> Void) where Label == Text {
         self.init(
             titleKey,
             action: {
@@ -32,8 +33,9 @@ extension Button {
             }
         )
     }
-    
-    public init<S>(_ title: S, asyncAction: @escaping () async -> Void) where Label == Text, S: StringProtocol {
+
+    @MainActor
+    public init<S>(_ title: S, asyncAction: @escaping @Sendable () async -> Void) where Label == Text, S: StringProtocol {
         self.init(
             title,
             action: {
@@ -43,10 +45,11 @@ extension Button {
             }
         )
     }
-    
+
     // MARK: Creating a Button with a Role
-    
-    public init(role: ButtonRole?, asyncAction: @escaping () async -> Void, label: () -> Label) {
+
+    @MainActor
+    public init(role: ButtonRole?, asyncAction: @escaping @Sendable () async -> Void, label: () -> Label) {
         self.init(
             role: role,
             action: {
@@ -57,11 +60,12 @@ extension Button {
             label: label
         )
     }
-    
+
+    @MainActor
     public init(
         _ titleKey: LocalizedStringKey,
         role: ButtonRole?,
-        asyncAction: @escaping () async -> Void
+        asyncAction: @escaping @Sendable () async -> Void
     ) where Label == Text {
         self.init(
             titleKey,
@@ -73,11 +77,12 @@ extension Button {
             }
         )
     }
-    
+
+    @MainActor
     public init<S>(
         _ title: S,
         role: ButtonRole?,
-        asyncAction: @escaping () async -> Void
+        asyncAction: @escaping @Sendable () async -> Void
     ) where Text == Label, S: StringProtocol {
         self.init(
             title,

@@ -7,9 +7,11 @@
 
 public enum VersionMigrationError<Wrapper>:
     Error,
-    Equatable
+    Equatable,
+    Sendable
 where
-    Wrapper: CodeMonkeyApple.VersionableWrapper
+    Wrapper: CodeMonkeyApple.VersionableWrapper,
+    Wrapper.Version: Sendable
 {
     case ineligibleForMigration(source: Wrapper.Version, destination: Wrapper.Version)
     case sourceHasHigherVersionThanDestination(source: Wrapper.Version, destination: Wrapper.Version)

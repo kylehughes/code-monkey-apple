@@ -7,32 +7,40 @@
 
 import SwiftUI
 
-extension Binding {
+extension Binding where Value: Sendable {
     // MARK: Public Instance Interface
-    
+
     public func composedToBool<Unwrapped>(
         whenEqualTo value: Value
-    ) -> Binding<Bool> where Value == Unwrapped?, Unwrapped: Equatable {
-        Binding<Bool> {
-            wrappedValue == value
-        } set: {
-            wrappedValue = $0 ? value : nil
+    ) -> Binding<Bool> where Value == Unwrapped?, Unwrapped: Equatable & Sendable {
+        let binding = self
+        let value = value
+        return Binding<Bool> {
+            binding.wrappedValue == value
+        } set: { newValue in
+            binding.wrappedValue = newValue ? value : nil
         }
     }
-    
-    public func composed<Other>(through keyPath: WritableKeyPath<Value, Other>) -> Binding<Other> {
-        Binding<Other> {
-            wrappedValue[keyPath: keyPath]
-        } set: {
-            wrappedValue[keyPath: keyPath] = $0
+
+    public func composed<Other: Sendable>(through keyPath: WritableKeyPath<Value, Other> & Sendable) -> Binding<Other> {
+        let binding = self
+        let keyPath = keyPath
+        return Binding<Other> {
+            binding.wrappedValue[keyPath: keyPath]
+        } set: { newValue in
+            binding.wrappedValue[keyPath: keyPath] = newValue
         }
     }
-    
-    public func composed<Other>(to: @escaping (Value) -> Other, from: @escaping (Other) -> Value) -> Binding<Other> {
-        Binding<Other> {
-            to(wrappedValue)
-        } set: {
-            wrappedValue = from($0)
+
+    public func composed<Other: Sendable>(
+        to: @escaping @Sendable (Value) -> Other,
+        from: @escaping @Sendable (Other) -> Value
+    ) -> Binding<Other> {
+        let binding = self
+        return Binding<Other> {
+            to(binding.wrappedValue)
+        } set: { newValue in
+            binding.wrappedValue = from(newValue)
         }
     }
 }

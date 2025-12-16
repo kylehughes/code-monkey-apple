@@ -7,11 +7,10 @@
 
 extension StringProtocol {
     // MARK: Public Instance Interface
-    
+
     public func makeSubdomains() -> [Subdomain] {
-        lazy
-            .split(separator: ".")
-            .map(String.init)
-            .map(Subdomain.init(rawValue:))
+        split(separator: ".")
+            .map { String($0) }
+            .map { Subdomain(rawValue: $0) }
     }
 }

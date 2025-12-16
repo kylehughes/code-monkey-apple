@@ -14,6 +14,6 @@ public func getEnumCaseName<T>(for value: T) -> String? {
         return nil
     }
     
-    return String(validatingUTF8: stringPtr)
+    return String(validatingCString: stringPtr)
 }
 #endif

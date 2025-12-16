@@ -5,9 +5,9 @@
 //  Created by Kyle Hughes on 3/15/21.
 //
 
-public struct DomainName: Equatable, Hashable, Codable, RawRepresentable {
+public struct DomainName: Equatable, Hashable, Codable, RawRepresentable, Sendable {
     // MARK: Public Instance Properties
-    
+
     public private(set) var rawValue: String
     public private(set) var subdomains: [Subdomain]
 }

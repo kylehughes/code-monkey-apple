@@ -9,6 +9,7 @@
 
 import SwiftUI
 
+@MainActor
 public struct CloseButton {
     // MARK: Internal Properties
     
@@ -56,6 +57,7 @@ extension CloseButton: UIViewRepresentable {
 // MARK: - Coordinator Definition
 
 extension CloseButton {
+    @MainActor
     public final class Coordinator {
         @usableFromInline
         var action: () -> Void
@@ -78,6 +80,7 @@ extension CloseButton {
 extension ToolbarItem<(), CloseButton> {
     // MARK: Public Static Interface
 
+    @MainActor
     @inlinable
     public static func closeButton(
         isTrailing: Bool = true,
@@ -88,7 +91,7 @@ extension ToolbarItem<(), CloseButton> {
                 #if canImport(UIKit) && !os(watchOS)
                 HapticFeedbackGenerator.shared.generate(for: .dismissSheet)
                 #endif
-                
+
                 dismiss()
             }
         }

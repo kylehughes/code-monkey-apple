@@ -59,15 +59,16 @@ struct TimeIntervalPicker_Previews: PreviewProvider {
 // MARK: TimeIntervalPicker.Coordinator Extension
 
 extension TimeIntervalPicker {
+    @MainActor
     public class Coordinator: NSObject {
         private var duration: Binding<TimeInterval>
-        
+
         // MARK: Public Initialization
 
         public init(duration: Binding<TimeInterval>) {
             self.duration = duration
         }
-        
+
         // MARK: Public Instance Interface
 
         @objc public func changed(_ sender: UIDatePicker) {

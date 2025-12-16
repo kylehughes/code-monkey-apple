@@ -5,9 +5,9 @@
 //  Created by Kyle Hughes on 1/24/21.
 //
 
-public struct ReverseDomainName: Equatable, Hashable, Codable, RawRepresentable {
+public struct ReverseDomainName: Equatable, Hashable, Codable, RawRepresentable, Sendable {
     // MARK: Public Instance Properties
-    
+
     public private(set) var rawValue: String
     public private(set) var subdomains: [Subdomain]
 }

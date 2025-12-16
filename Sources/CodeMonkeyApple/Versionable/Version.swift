@@ -10,6 +10,7 @@ public protocol Version:
     Comparable,
     Codable,
     RawRepresentable,
+    Sendable,
     SynthesizedIdentifiable
 where
     RawValue == UInt

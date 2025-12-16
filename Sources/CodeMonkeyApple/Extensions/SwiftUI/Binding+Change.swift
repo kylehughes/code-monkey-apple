@@ -7,18 +7,19 @@
 
 import SwiftUI
 
-extension Binding {
+extension Binding where Value: Sendable {
     // MARK: Public Instance Interface
-    
-    public func onChange(_ handler: @escaping (Value) async -> Void) -> Binding<Value> {
+
+    @MainActor
+    public func onChange(_ handler: @escaping @Sendable (Value) async -> Void) -> Binding<Value> {
         onChange { value in
             Task {
                 await handler(value)
             }
         }
     }
-    
-    public func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
+
+    public func onChange(_ handler: @escaping @Sendable (Value) -> Void) -> Binding<Value> {
         Binding(
             get: {
                 wrappedValue

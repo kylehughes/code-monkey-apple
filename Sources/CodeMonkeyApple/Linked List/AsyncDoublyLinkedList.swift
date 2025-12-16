@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final actor AsyncDoublyLinkedList<Value> {
+public final actor AsyncDoublyLinkedList<Value: Sendable> {
     public private(set) var head: Node?
     public private(set) var tail: Node?
     

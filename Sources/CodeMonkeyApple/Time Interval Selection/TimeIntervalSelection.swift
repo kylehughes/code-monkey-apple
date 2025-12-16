@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum TimeIntervalSelection: Codable, Equatable, Hashable, Storable {
+public enum TimeIntervalSelection: Codable, Equatable, Hashable, Sendable {
     case builtIn(TimeInterval)
     case custom(TimeInterval)
     
